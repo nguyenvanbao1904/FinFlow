@@ -1,0 +1,14 @@
+# Frontend
+frontend/node_modules/
+frontend/build/
+
+# Backend (Maven)
+backend/target/
+
+# Data Analysis (Python)
+dataAnalysis/venv/
+dataAnalysis/__pycache__/
+
+# IDE files
+.idea/
+*.iml
