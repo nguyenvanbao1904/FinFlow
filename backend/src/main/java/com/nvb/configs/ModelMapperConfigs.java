@@ -6,14 +6,16 @@ package com.nvb.configs;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  *
  * @author nguyenvanbao
  */
+@Configuration 
 public class ModelMapperConfigs {
     @Bean
-    public static ModelMapper modelMapper() {
+    public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper;
     }
