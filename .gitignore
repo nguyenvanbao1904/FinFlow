@@ -4,6 +4,9 @@ frontend/build/
 
 # Backend (Maven)
 backend/target/
+# env
+backend/src/main/resources/application.properties
+
 
 # Data Analysis (Python)
 dataAnalysis/venv/
