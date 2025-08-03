@@ -1,0 +1,18 @@
+/* ========== FINAL CTA SECTION ========== */
+.cta {
+    max-width: 800px;
+}
+.ctaCard {
+    padding: 4rem;
+    background: linear-gradient(135deg, rgba(62, 123, 255, 0.1), rgba(23, 227, 167, 0.1));
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease, border-color 0.4s ease;
+    text-align: center;
+    height: 100%;
+}
+.ctaCard h2 { font-size: 2.2rem; }
+.ctaCard p {
+    margin-bottom: 2rem;
+}

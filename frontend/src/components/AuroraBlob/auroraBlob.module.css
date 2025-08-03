@@ -1,0 +1,38 @@
+/* ========== AURORA BACKGROUND ========== */
+.auroraBlob {
+    position: absolute;
+    filter: blur(150px);
+    opacity: 0.3;
+    border-radius: 50%;
+    z-index: -1;
+    transition: opacity 0.5s ease;
+}
+.blob1 {
+    width: 600px;
+    height: 600px;
+    background: var(--primary-blue);
+    top: -200px;
+    left: -200px;
+    animation: float 20s infinite alternate;
+}
+.blob2 {
+    width: 500px;
+    height: 500px;
+    background: var(--accent-cyan);
+    top: 30%;
+    right: -150px;
+    animation: float 25s infinite alternate-reverse;
+}
+.blob3 {
+    width: 400px;
+    height: 400px;
+    background: #8A2BE2; /* A purple accent */
+    bottom: -100px;
+    left: 20%;
+    animation: float 18s infinite alternate;
+}
+
+@keyframes float {
+    0% { transform: translateY(0) translateX(0) rotate(0deg); }
+    100% { transform: translateY(100px) translateX(50px) rotate(180deg); }
+}

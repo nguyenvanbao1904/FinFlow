@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Admin - FinFlow</title>
+        <link rel="stylesheet" th:href="@{/css/login.css}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    </head>
+    <body>
+        <div class="login-container">
+            <form class="login-form" id="adminLoginForm" th:action="@{/login}" method="post">
+                <div class="login-logo">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>FinFlow<span class="accent">Admin</span></span>
+                </div>
+                <h2>Đăng nhập Quản trị</h2>
+                <div class="input-group">
+                    <label for="username">Tài khoản</label>
+                    <input type="text" id="username" name="username" placeholder="Nhập tài khoản..." required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" placeholder="Nhập mật khẩu..." required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                <div id="loginMessage" class="login-message"></div>
+            </form>
+        </div>
+    </body>
+</html>

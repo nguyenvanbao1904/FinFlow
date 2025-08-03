@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Admin - FinFlow</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div class="admin-layout">
+    <aside th:replace="fragments/sidebar :: sidebar"></aside>
+    <main class="main-content" layout:fragment="content"></main>
+</div>
+</body>
+</html>

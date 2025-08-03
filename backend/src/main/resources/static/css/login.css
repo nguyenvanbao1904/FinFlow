@@ -1,0 +1,120 @@
+:root {
+    --color-primary: #3E7BFF;
+    --color-danger: #fa5252;
+    --color-success: #20c997;
+    --bg-main: #F4F7FC;
+    --bg-card: #FFFFFF;
+    --text-light: #F9FAFB;
+    --text-dark: #111827;
+    --text-muted: #6B7280;
+    --border-color: #E5E7EB;
+    --font-family: 'Inter', sans-serif;
+}
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login-container {
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 2.5rem 2rem 2rem 2rem;
+    min-width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.login-form {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.8rem;
+}
+.login-logo .fa-user-shield {
+    font-size: 2.2rem;
+    color: var(--color-primary);
+}
+.login-logo .accent {
+    color: var(--color-primary);
+    font-weight: 400;
+}
+h2 {
+    text-align: center;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.input-group label {
+    font-size: 0.97rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.input-group input {
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    transition: border-color 0.2s;
+}
+.input-group input:focus {
+    border-color: var(--color-primary);
+}
+.btn {
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: var(--color-primary);
+    color: #fff;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+.btn:hover {
+    background-color: #215bdb;
+}
+.login-message {
+    min-height: 1.3em;
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    color: var(--color-danger);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: color 0.15s;
+}
+@media (max-width: 500px) {
+    .login-container {
+        min-width: 100vw;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 1.5rem 0.5rem;
+    }
+}

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/layout}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content">
+    <h1>Dashboard</h1>
+    <p>Tổng số người dùng: <span th:text="${userCount}"></span></p>
+</section>
+</body>
+</html>
