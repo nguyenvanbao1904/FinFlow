@@ -1,35 +1,169 @@
 /* ========== GLOBAL STYLES & VARIABLES ========== */
 :root {
-    /* Base variables (Dark Mode Default) */
-    --primary-blue: #3E7BFF;
-    --accent-cyan: #17E3A7;
-    --dark-bg: #030613;
-    --card-bg: rgba(16, 22, 45, 0.5); /* Semi-transparent card background */
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --text-light: #F0F2F5;
-    --text-muted: #8A94AD;
-    --font-family: 'Inter', sans-serif;
-    --glow-color: rgba(62, 123, 255, 0.5);
-    
-    /* Variables for box-shadows (used in light mode) */
-    --card-shadow: 0 8px 25px rgba(103, 114, 138, 0.1);
-    --card-shadow-hover: 0 12px 35px rgba(103, 114, 138, 0.15);
+  /* Base variables (Dark Mode Default) */
+  --primary-blue: #3e7bff;
+  --accent-cyan: #17e3a7;
+  --dark-bg: #030613;
+  --card-bg: rgba(16, 22, 45, 0.5); /* Semi-transparent card background */
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-light: #f0f2f5;
+  --text-muted: #8a94ad;
+  --font-family: "Inter", sans-serif;
+  --glow-color: rgba(62, 123, 255, 0.5);
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --bg-tertiary: #1b2340;
+
+  /* Variables for box-shadows (used in light mode) */
+  --card-shadow: 0 8px 25px rgba(103, 114, 138, 0.1);
+  --card-shadow-hover: 0 12px 35px rgba(103, 114, 138, 0.15);
+  --income-color: #10b981;
+  --success-color: #10b981;
+  --expense-color: #ef4444;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 body {
-    font-family: var(--font-family);
-    background: var(--dark-bg);
-    color: var(--text-light);
-    line-height: 1.6;
-    overflow-x: hidden;
+  font-family: var(--font-family);
+  background: var(--dark-bg);
+  color: var(--text-light);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    135deg,
+    rgba(62, 123, 255, 0.3),
+    rgba(23, 227, 167, 0.3)
+  );
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(62, 123, 255, 0.5),
+    rgba(23, 227, 167, 0.5)
+  );
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(
+    135deg,
+    rgba(62, 123, 255, 0.7),
+    rgba(23, 227, 167, 0.7)
+  );
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Firefox Scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(62, 123, 255, 0.3) rgba(255, 255, 255, 0.02);
+}
+
+/* Custom scrollbar for specific containers */
+.chartContainer::-webkit-scrollbar,
+.contentCard::-webkit-scrollbar,
+.transactionList::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.chartContainer::-webkit-scrollbar-thumb,
+.contentCard::-webkit-scrollbar-thumb,
+.transactionList::-webkit-scrollbar-thumb {
+  background: rgba(62, 123, 255, 0.2);
+  border-radius: 8px;
+  border: none;
+}
+
+.chartContainer::-webkit-scrollbar-thumb:hover,
+.contentCard::-webkit-scrollbar-thumb:hover,
+.transactionList::-webkit-scrollbar-thumb:hover {
+  background: rgba(62, 123, 255, 0.4);
+}
+
+.chartContainer::-webkit-scrollbar-track,
+.contentCard::-webkit-scrollbar-track,
+.transactionList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 8px;
+}
+
+/* Scrollbar cho các modal và dropdown */
+.modal::-webkit-scrollbar,
+.dropdown::-webkit-scrollbar {
+  width: 4px;
+}
+
+.modal::-webkit-scrollbar-thumb,
+.dropdown::-webkit-scrollbar-thumb {
+  background: rgba(23, 227, 167, 0.3);
+  border-radius: 6px;
+}
+
+.modal::-webkit-scrollbar-thumb:hover,
+.dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(23, 227, 167, 0.5);
+}
+
+/* Responsive scrollbar */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .chartContainer::-webkit-scrollbar,
+  .contentCard::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Scrollbar animation */
+@keyframes scrollbarGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(62, 123, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(62, 123, 255, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(62, 123, 255, 0);
+  }
+}
+
+::-webkit-scrollbar-thumb:active {
+  animation: scrollbarGlow 0.3s ease-in-out;
 }

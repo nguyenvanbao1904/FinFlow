@@ -1,9 +1,26 @@
-<div th:fragment="sidebar">
-  <nav>
-    <ul>
-      <li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
-      <li><a th:href="@{/admin/users}">Quản lý người dùng</a></li>
-      <!-- ... -->
-    </ul>
-  </nav>
-</div>
+<aside class="sidebar" th:fragment="sidebar">
+    <div class="sidebar-header">
+        <a th:href="@{/}" class="logo">FinFlow<span>Admin</span></a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a th:href="@{/}" class="nav-item" data-target="">
+            <i class="fa-solid fa-tachometer-alt"></i><span>Dashboard</span>
+        </a>
+        <a th:href="@{/users}" class="nav-item" data-target="users">
+            <i class="fa-solid fa-users"></i><span>Quản lý Người dùng</span>
+        </a>
+        <a th:href="@{/categories}" class="nav-item" data-target="categories">
+            <i class="fa-solid fa-tags"></i><span>Quản lý Hạng mục</span>
+        </a>
+        <a th:href="@{/notifications}" class="nav-item" data-target="notifications">
+            <i class="fa-solid fa-bell"></i><span>Gửi Thông báo</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a th:href="@{/logout}" class="nav-item">
+            <i class="fa-solid fa-sign-out-alt"></i><span>Đăng xuất</span>
+        </a>
+    </div>
+</aside>

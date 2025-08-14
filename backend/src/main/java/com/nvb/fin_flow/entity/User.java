@@ -28,4 +28,16 @@ public class User {
 
     @ManyToMany
     Set<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    Set<Transaction> transactions;
+
+    @OneToMany(mappedBy = "createdBy")
+    Set<Category> customCategories;
+
+    @OneToMany(mappedBy = "createdBy")
+    Set<Budget> budgets;
+
+    @OneToMany(mappedBy = "createdBy")
+    Set<Goal> goals;
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="vn">
+<head>
+    <title layout:fragment="pageTitle">Default Title</title>
+
+    <link rel="stylesheet" th:href="@{/css/layoutStyle/root.css}">
+    <link rel="stylesheet" th:href="@{/css/layoutStyle/base.css}">
+    <link rel="stylesheet" th:href="@{/css/fragmentsStyle/sidebar.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <th:block layout:fragment="pageCss"></th:block>
+</head>
+<body>
+<div class="admin-layout">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="main-content">
+        <th:block layout:fragment="content"></th:block>
+    </main>
+</div>
+
+<th:block layout:fragment="extraContent"></th:block>
+
+<script th:src="@{/js/main.js}"></script>
+
+<th:block layout:fragment="pageJs"></th:block>
+</body>
+</html>

@@ -1,117 +1,88 @@
 .divider {
-    text-align: center;
-    position: relative;
-    margin: 1rem 0;
+  text-align: center;
+  position: relative;
+  margin: 1rem 0;
 }
 
 .divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--glass-border);
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--glass-border);
 }
 
 .divider span {
-    padding: 0 1rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-.loginWrapper {
-    min-height: 100vh;
-    position: relative;
-    background: radial-gradient(ellipse at top, rgba(62, 123, 255, 0.1) 0%, transparent 70%),
-                radial-gradient(ellipse at bottom right, rgba(23, 227, 167, 0.1) 0%, transparent 70%);
-    overflow: hidden;
-}
-
-.loginMain {
-    padding-top: 120px;
-    padding-bottom: 4rem;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-}
-
-.loginContainer {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-    background: var(--card-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 24px;
-    padding: 3rem;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 .loginFormSection {
-    max-width: 400px;
-    margin: 0 auto;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .formHeader {
-    text-align: center;
-    margin-bottom: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .formHeader h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(45deg, var(--primary-blue), var(--accent-cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(45deg, var(--primary-blue), var(--accent-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .formHeader p {
-    color: var(--text-muted);
-    font-size: 1rem;
+  color: var(--text-muted);
+  font-size: 1rem;
 }
 
 .forgotPassword {
-    color: var(--primary-blue);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.3s ease;
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .forgotPassword:hover {
-    color: var(--accent-cyan);
+  color: var(--accent-cyan);
 }
 
 .socialLogin {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .signupLink {
-    text-align: center;
-    margin-top: 1rem;
+  text-align: center;
+  margin-top: 1rem;
 }
 
 .signupLink p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 .signupLink a {
-    color: var(--primary-blue);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s ease;
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
 }
 .signupLink a:hover {
-    color: var(--accent-cyan);
+  color: var(--accent-cyan);
 }
 
-.loginFeaturesSection{
-    font-size: 1rem;
+.loginFeaturesSection {
+  font-size: 1rem;
 }

@@ -1,88 +1,88 @@
 /* ========== HEADER ========== */
-header {
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    padding: 1.5rem 0;
-    z-index: 1000;
-    background: rgba(3, 6, 19, 0.6);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--glass-border);
-    transition: background-color 0.4s ease, border-color 0.4s ease;
+.header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  padding: 1.5rem 0;
+  z-index: 1000;
+  background: rgba(3, 6, 19, 0.6);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 .navContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #fff;
-    text-decoration: none;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
 }
 
-header nav {
-    display: flex;
-    gap: 2rem;
+.header nav {
+  display: flex;
+  gap: 2rem;
 }
-header nav a {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s;
+.header nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
 }
-header nav a:hover {
-    color: var(--text-light);
+.header nav a:hover {
+  color: var(--text-light);
 }
 
 /* ========== THEME & LANGUAGE CONTROLS IN HEADER ========== */
 .headerControls {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .languageSwitch {
-    background: var(--card-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 50px;
-    padding: 0.2rem;
-    display: flex;
-    cursor: pointer;
-    transition: background-color 0.4s ease, border-color 0.4s ease;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 50px;
+  padding: 0.2rem;
+  display: flex;
+  cursor: pointer;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 .langOption {
-    padding: 0.4rem 0.8rem;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    transition: all 0.3s ease;
-    color: var(--text-muted);
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  color: var(--text-muted);
 }
 
 .langOption.active {
-    background: var(--primary-blue);
-    color: #fff;
+  background: var(--primary-blue);
+  color: #fff;
 }
 
 .themeToggle {
-    background: var(--card-bg);
-    border: 1px solid var(--glass-border);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: var(--text-muted);
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-muted);
 }
 .themeToggle:hover {
-    color: var(--text-light);
-    border-color: var(--primary-blue);
+  color: var(--text-light);
+  border-color: var(--primary-blue);
 }

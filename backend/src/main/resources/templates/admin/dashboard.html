@@ -1,10 +1,58 @@
 <!DOCTYPE html>
-<html layout:decorate="~{admin/layout}" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/mainLayout}"
+      lang="vn">
+
+<head>
+    <title layout:fragment="pageTitle">Dashboard Tổng quan</title>
+
+    <th:block layout:fragment="pageCss">
+        <link rel="stylesheet" th:href="@{/css/adminStyle/dashboard.css}">
+    </th:block>
+</head>
+
 <body>
-<section layout:fragment="content">
-    <h1>Dashboard</h1>
-    <p>Tổng số người dùng: <span th:text="${userCount}"></span></p>
+<section id="dashboard" class="content-section active" layout:fragment="content">
+    <header class="content-header">
+        <h1>Dashboard Tổng quan</h1>
+    </header>
+
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <i class="fa-solid fa-users"></i>
+            <div class="stat-info">
+                <span class="stat-value">15,789</span>
+                <span class="stat-label">Tổng người dùng</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="fa-solid fa-user-plus"></i>
+            <div class="stat-info">
+                <span class="stat-value">+256</span>
+                <span class="stat-label">Người dùng mới (Tháng này)</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="fa-solid fa-user-clock"></i>
+            <div class="stat-info">
+                <span class="stat-value">3,120</span>
+                <span class="stat-label">Người dùng hoạt động (24h)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h3>Biểu đồ Tăng trưởng Người dùng</h3>
+        <canvas id="user-growth-chart" height="100"></canvas>
+    </div>
 </section>
+
+<th:block layout:fragment="pageJs">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+</th:block>
 </body>
 </html>

@@ -1,18 +1,6 @@
-:root {
-    --color-primary: #3E7BFF;
-    --color-danger: #fa5252;
-    --color-success: #20c997;
-    --bg-main: #F4F7FC;
-    --bg-card: #FFFFFF;
-    --text-light: #F9FAFB;
-    --text-dark: #111827;
-    --text-muted: #6B7280;
-    --border-color: #E5E7EB;
-    --font-family: 'Inter', sans-serif;
-}
 body {
     margin: 0;
-    font-family: var(--font-family);
+    font-family: 'Inter', sans-serif;
     background-color: var(--bg-main);
     color: var(--text-dark);
     min-height: 100vh;
@@ -20,6 +8,7 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .login-container {
     background: var(--bg-card);
     border-radius: 16px;

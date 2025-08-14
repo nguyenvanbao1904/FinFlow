@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/mainLayout}"
+      lang="vn">
+
+<head>
+    <title layout:fragment="pageTitle">Quản lý Người dùng</title>
+
+    <th:block layout:fragment="pageCss">
+        <link rel="stylesheet" th:href="@{/css/adminStyle/userManagement.css}">
+    </th:block>
+</head>
+
+<body>
+<section id="user-management" class="content-section active" layout:fragment="content">
+    <header class="content-header">
+        <h1>Quản lý Người dùng</h1>
+    </header>
+
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>Email</th>
+                <th>Ngày đăng ký</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>user1@email.com</td>
+                <td>28-10-2024</td>
+                <td><span class="status-badge active">Hoạt động</span></td>
+                <td>
+                    <button class="action-btn-sm disable">Vô hiệu hóa</button>
+                    <button class="action-btn-sm delete">Xóa</button>
+                </td>
+            </tr>
+            <tr>
+                <td>user2@email.com</td>
+                <td>25-10-2024</td>
+                <td><span class="status-badge disabled">Bị vô hiệu hóa</span></td>
+                <td>
+                    <button class="action-btn-sm enable">Kích hoạt</button>
+                    <button class="action-btn-sm delete">Xóa</button>
+                </td>
+            </tr>
+            <tr>
+                <td>user3@email.com</td>
+                <td>22-10-2024</td>
+                <td><span class="status-badge active">Hoạt động</span></td>
+                <td>
+                    <button class="action-btn-sm disable">Vô hiệu hóa</button>
+                    <button class="action-btn-sm delete">Xóa</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<th:block layout:fragment="pageJs">
+</th:block>
+</body>
+</html>

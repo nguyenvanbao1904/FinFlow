@@ -1,0 +1,15 @@
+package com.nvb.fin_flow.dto.request;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class IconCreationRequest {
+    String id;
+    String name;
+    String iconClass;
+}

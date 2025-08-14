@@ -1,0 +1,64 @@
+.transactionItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.transactionItem:hover {
+  transform: translateX(4px);
+  border-color: var(--primary-blue);
+}
+
+.transactionIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.transactionDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.transactionDetails .category {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.transactionDetails .description {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.transactionDetails .date {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.transactionAmount {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.transactionAmount.income {
+  color: var(--income-color);
+}
+
+.transactionAmount.expense {
+  color: var(--expense-color);
+}

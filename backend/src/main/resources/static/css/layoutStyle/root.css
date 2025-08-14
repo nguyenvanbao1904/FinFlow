@@ -1,0 +1,13 @@
+:root {
+    --color-primary: #3E7BFF;
+    --color-danger: #fa5252;
+    --color-success: #20c997;
+    --color-warning: #fcc419;
+    --bg-main: #F4F7FC;
+    --bg-card: #FFFFFF;
+    --text-light: #F9FAFB;
+    --text-dark: #111827;
+    --text-muted: #6B7280;
+    --border-color: #E5E7EB;
+    --bg-sidebar: #1F2937;
+}

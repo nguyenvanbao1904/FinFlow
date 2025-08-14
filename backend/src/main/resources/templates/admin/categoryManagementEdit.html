@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/mainLayout}"
+      lang="vn">
+
+<head>
+    <title layout:fragment="pageTitle">Quản lý Hạng mục Mặc định</title>
+    <th:block layout:fragment="pageCss">
+        <link rel="stylesheet" th:href="@{/css/adminStyle/categoryManagement.css}">
+    </th:block>
+</head>
+
+<body>
+<th:block layout:fragment="extraContent">
+    <div id="category-modal" class="modal-overlay" th:style="'display: grid;'">
+        <div class="modal-content">
+            <h3 id="modal-title">Thêm Hạng mục mới</h3>
+            <form id="category-form" th:method="POST" th:action="@{/categories}" th:object="${categoryCreationRequest}">
+                <input type="hidden"  th:field="*{id}">
+                <div class="form-group">
+                    <label for="category-name-input">Tên hạng mục</label>
+                    <input type="text" id="category-name-input" placeholder="Ví dụ: Du lịch" required th:field="*{name}">
+                </div>
+
+                <div class="form-group">
+                    <label>Loại hạng mục</label>
+                    <select id="category-type-select" th:field="*{type}">
+                        <option value="EXPENSE">Chi tiêu</option>
+                        <option value="INCOME">Thu nhập</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Chọn Icon</label>
+                    <div class="icon-picker">
+                        <div
+                             th:each="icon : ${icons}"
+                             th:class="${icon.getId().equals(categoryCreationRequest.getIcon().getId())} ? 'icon-option selected': 'icon-option'"
+                             th:data-icon-id="${icon.id}"
+                             th:title="${icon.name}">
+                            <i th:class="${icon.iconClass}"></i>
+                            <span th:text="${icon.name}"></span>
+                            <i class="fa-solid fa-circle-xmark remove-icon"
+                               th:data-icon-id="${icon.id}"></i>
+                        </div>
+                    </div>
+                    <!-- Input ẩn để form vẫn submit iconClass -->
+                    <input type="hidden" id="category-icon-input" th:field="*{icon}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mã màu nền</label>
+                    <input type="color" id="category-color-input"
+                           name="colorCode"
+                           th:value="${categoryCreationRequest.colorCode != null ? categoryCreationRequest.colorCode : '#7950f2'}"
+                    >
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-category-btn"><a th:href="@{/categories}">Hủy</a></button>
+                    <button type="submit" class="btn btn-primary">Lưu Hạng mục</button>
+                </div>
+            </form>
+            <button class="close-btn" id="close-category-edit-modal-btn">×</button>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="pageJs">
+    <script th:src="@{/js/categoryManagement.js}"></script>
+</th:block>
+</body>
+</html>
