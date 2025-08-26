@@ -1,0 +1,22 @@
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.categorySelect,
+.iconSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.categorySelect p,
+.iconSelect p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--primary-blue);
+  text-align: right;
+  cursor: pointer;
+}

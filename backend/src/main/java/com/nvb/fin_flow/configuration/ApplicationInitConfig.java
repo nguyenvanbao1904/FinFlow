@@ -112,6 +112,18 @@ public class ApplicationInitConfig {
                         .iconClass("fa-solid fa-wallet")
                         .name("Tiền lương")
                         .build());
+
+                icons.add(Icon
+                        .builder()
+                        .iconClass("fa-solid fa-arrow-trend-up")
+                        .name("Cổ phiếu")
+                        .build());
+
+                icons.add(Icon
+                        .builder()
+                        .iconClass("fa-solid fa-money-bill-trend-up")
+                        .name("Tiền gửi")
+                        .build());
                 iconRepository.saveAll(icons);
             }
             if(categoryRepository.count() == 0){
@@ -120,7 +132,7 @@ public class ApplicationInitConfig {
                                 .builder()
                                 .icon(iconRepository.findByName("Ăn uống").orElse(null))
                                 .type(CategoryType.EXPENSE)
-                                .createdBy(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
+                                .user(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
                                 .colorCode("#FFA500")
                                 .name("Ăn uống")
                                 .build());
@@ -129,7 +141,7 @@ public class ApplicationInitConfig {
                         .builder()
                         .icon(iconRepository.findByName("Đi lại").orElse(null))
                         .type(CategoryType.EXPENSE)
-                        .createdBy(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
+                        .user(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
                         .colorCode("#2196F3")
                         .name("Đi lại")
                         .build());
@@ -138,7 +150,7 @@ public class ApplicationInitConfig {
                         .builder()
                         .icon(iconRepository.findByName("Mua sắm").orElse(null))
                         .type(CategoryType.EXPENSE)
-                        .createdBy(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
+                        .user(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
                         .colorCode("#E91E63")
                         .name("Mua sắm")
                         .build());
@@ -147,9 +159,27 @@ public class ApplicationInitConfig {
                         .builder()
                         .icon(iconRepository.findByName("Tiền lương").orElse(null))
                         .type(CategoryType.INCOME)
-                        .createdBy(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
+                        .user(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
                         .colorCode("#4CAF50")
                         .name("Tiền lương")
+                        .build());
+
+                categories.add(Category
+                        .builder()
+                        .icon(iconRepository.findByName("Cổ phiếu").orElse(null))
+                        .type(CategoryType.SAVING)
+                        .user(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
+                        .colorCode("#7950f2")
+                        .name("Cổ phiếu")
+                        .build());
+
+                categories.add(Category
+                        .builder()
+                        .icon(iconRepository.findByName("Tiền gửi").orElse(null))
+                        .type(CategoryType.SAVING)
+                        .user(userRepository.findByUsername(ADMIN_USER_NAME).orElse(null))
+                        .colorCode("#6c00f5")
+                        .name("Tiền gửi")
                         .build());
 
                 categoryRepository.saveAll(categories);

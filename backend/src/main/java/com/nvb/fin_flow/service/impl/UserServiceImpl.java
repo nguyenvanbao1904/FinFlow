@@ -1,6 +1,7 @@
 package com.nvb.fin_flow.service.impl;
 
 import com.nvb.fin_flow.constant.PredefinedRole;
+import com.nvb.fin_flow.dto.request.PasswordRequest;
 import com.nvb.fin_flow.dto.request.UserCreationRequest;
 import com.nvb.fin_flow.dto.response.UserResponse;
 import com.nvb.fin_flow.entity.Role;
@@ -15,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -80,4 +82,27 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @Override
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(null);
+        if(user == null){
+            throw new AppException(ErrorCode.ENTITY_NOT_EXISTED);
+        }
+        return user;
+    }
+
+    @Override
+    public void createPassword(PasswordRequest passwordRequest) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ENTITY_NOT_EXISTED, Map.of("entity", "User")));
+
+        if (StringUtils.hasText(user.getPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_EXISTED);
+        }
+        user.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
+        userRepository.save(user);
+    }
 }

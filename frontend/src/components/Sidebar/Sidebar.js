@@ -4,11 +4,17 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/features/auth/authSelectors";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/features/auth/authThunks";
+import { useNavigate } from "react-router-dom";
 import Button from "../Button/Button";
 
 const Sidebar = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logoutUser({ navigate }));
+  };
 
   return (
     <aside className={Style.sidebar}>
@@ -63,7 +69,7 @@ const Sidebar = () => {
             isLarge={false}
             text="Đăng xuất"
             icon="fa-solid fa-sign-out-alt"
-            onClick={() => dispatch(logoutUser())}
+            onClick={handleLogout}
             isPrimary={false}
           />
         </div>

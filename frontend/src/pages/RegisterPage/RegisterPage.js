@@ -15,12 +15,14 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/features/auth/authSelectors";
 import AuthLayout from "../../layout/AuthLayout/AuthLayout";
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { isLoading, callApi } = useApi();
+  const [isSubmitting, setIsSubmitting] = useState(false); // Thêm state riêng
+  const { callApi } = useApi();
   const navigate = useNavigate();
 
   const user = useSelector(selectUser);
@@ -33,10 +35,18 @@ const RegisterPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     if (password !== confirmPassword) {
-      alert("Mật khẩu không khớp. Vui lòng kiểm tra lại.");
+      toast.error("Mật khẩu không khớp. Vui lòng kiểm tra lại.", {
+        position: "top-right",
+        autoClose: 3000,
+        toastId: "register-error",
+      });
       return;
     }
+
+    setIsSubmitting(true); // Bắt đầu loading
+
     const userData = {
       username,
       password,
@@ -46,10 +56,32 @@ const RegisterPage = () => {
     };
 
     try {
-      await callApi("POST", endpoints.users.register, userData, true);
-      navigate("/login");
+      let response = await callApi(
+        "POST",
+        endpoints.users.register,
+        userData,
+        true
+      );
+
+      // Hiển thị toast thành công
+      toast.success(response.message, {
+        position: "top-right",
+        autoClose: 2000,
+        toastId: "register-success",
+      });
+
+      // Navigate sau một khoảng thời gian ngắn để toast hiển thị
+      setTimeout(() => {
+        setIsSubmitting(false); // Tắt loading trước khi navigate
+        navigate("/login");
+      }, 2500);
     } catch (err) {
-      alert(`Đăng ký không thành công: ${err.message}`);
+      setIsSubmitting(false); // Tắt loading khi có lỗi
+      toast.error(`Đăng ký không thành công: ${err.message}`, {
+        position: "top-right",
+        autoClose: 3000,
+        toastId: "register-error",
+      });
     }
   };
 
@@ -68,85 +100,81 @@ const RegisterPage = () => {
 
   return (
     <>
-      {isLoading ? (
-        <>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "30px",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
-            }}
-          >
-            <CircularProgress></CircularProgress>
-            <Typography>Authenticating...</Typography>
-          </Box>
-        </>
+      {isSubmitting ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <CircularProgress />
+          <Typography>Đang xử lý đăng ký...</Typography>
+        </Box>
       ) : (
-        <>
-          <AuthLayout>
-            <div className={style.loginFormSection}>
-              <div className={style.formHeader}>
-                <h1>FinFlow - Trợ Lý Tài Chính Cá Nhân Toàn Diện</h1>
-                <p>Đăng Ký Tài Khoản Để Có Trải Nghiệm Đầy Đủ Nhất</p>
-              </div>
+        <AuthLayout>
+          <div className={style.loginFormSection}>
+            <div className={style.formHeader}>
+              <h1>FinFlow - Trợ Lý Tài Chính Cá Nhân Toàn Diện</h1>
+              <p>Đăng Ký Tài Khoản Để Có Trải Nghiệm Đầy Đủ Nhất</p>
+            </div>
 
-              <Form onSubmit={handleSubmit}>
-                <FormGroup
-                  label="Tên đăng nhập"
-                  type="text"
-                  placeholder="YourUsername@123"
-                  icon="fa-solid fa-user"
-                  value={username}
-                  setValue={setUsername}
+            <Form onSubmit={handleSubmit}>
+              <FormGroup
+                label="Tên đăng nhập"
+                type="text"
+                placeholder="YourUsername@123"
+                icon="fa-solid fa-user"
+                value={username}
+                setValue={setUsername}
+              />
+              <FormGroup
+                label="Mật khẩu"
+                type="password"
+                placeholder="Nhập mật khẩu"
+                icon="fa-solid fa-lock"
+                value={password}
+                setValue={setPassword}
+              />
+              <FormGroup
+                label="Xác nhận mật khẩu"
+                type="password"
+                placeholder="Nhập lại mật khẩu"
+                icon="fa-solid fa-lock"
+                value={confirmPassword}
+                setValue={setConfirmPassword}
+              />
+              <SubmitButton text="Đăng ký" type="submit" />
+              <div className={style.divider}>
+                <span>hoặc</span>
+              </div>
+              <div className={style.socialLogin}>
+                <Button
+                  isPrimary={false}
+                  text="Đăng nhập với Google"
+                  icon="fab fa-google"
+                  onClick={handleGoogleLogin}
                 />
-                <FormGroup
-                  label="Mật khẩu"
-                  type="password"
-                  placeholder="Nhập mật khẩu"
-                  icon="fa-solid fa-lock"
-                  value={password}
-                  setValue={setPassword}
+                <Button
+                  isPrimary={false}
+                  text="Đăng nhập với Facebook"
+                  icon="fab fa-facebook"
                 />
-                <FormGroup
-                  label="Xác nhận mật khẩu"
-                  type="password"
-                  placeholder="Nhập lại mật khẩu"
-                  icon="fa-solid fa-lock"
-                  value={confirmPassword}
-                  setValue={setConfirmPassword}
-                />
-                <SubmitButton text="Đăng ký" type="submit" />
-                <div className={style.divider}>
-                  <span>hoặc</span>
-                </div>
-                <div className={style.socialLogin}>
-                  <Button
-                    isPrimary={false}
-                    text="Đăng nhập với Google"
-                    icon="fab fa-google"
-                    onClick={handleGoogleLogin}
-                  />
-                  <Button
-                    isPrimary={false}
-                    text="Đăng nhập với Facebook"
-                    icon="fab fa-facebook"
-                  />
-                </div>
-                <div className={style.signupLink}>
-                  <p>
-                    Đã có tài khoản? <Link to={"/login"}>Đăng nhập ngay</Link>
-                  </p>
-                </div>
-              </Form>
-            </div>
-            <div className={style.loginFeaturesSection}>
-              <FeaturesCard featureCardInfo={benefitsInfo} />
-            </div>
-          </AuthLayout>
-        </>
+              </div>
+              <div className={style.signupLink}>
+                <p>
+                  Đã có tài khoản? <Link to={"/login"}>Đăng nhập ngay</Link>
+                </p>
+              </div>
+            </Form>
+          </div>
+          <div className={style.loginFeaturesSection}>
+            <FeaturesCard featureCardInfo={benefitsInfo} />
+          </div>
+        </AuthLayout>
       )}
     </>
   );

@@ -74,6 +74,27 @@
                 </li>
             </ul>
         </div>
+
+        <div class="category-column">
+            <div class="column-header">
+                <h2><i class="fa-solid fa-arrow-up income-color"></i> Hạng mục Tiết kiệm</h2>
+            </div>
+            <ul class="category-list" th:each="category : ${categoriesSaving}">
+                <li class="category-item">
+                    <div class="category-icon" th:style="'background-color:' + ${category.colorCode}">
+                        <i th:class="${category.icon.iconClass}"></i>
+                    </div>
+                    <span class="category-name" th:text="${category.name}"></span>
+                    <div class="category-actions">
+                        <button class="action-btn-sm edit">
+                            <a th:href="@{/categories/{id}(id=${category.id})}">Sửa</a>
+                        </button>
+                        <button class="action-btn-sm delete" th:data-category-id="${category.id}">Xóa</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
     </div>
 </section>
 <th:block layout:fragment="extraContent">

@@ -5,12 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,59 +23,93 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@FieldDefaults(level = AccessLevel.PRIVATE,  makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
     String[] PUBLIC_POST_ENDPOINTS = {
-            "/api/auth/token", "/api/auth/logout", "/api/auth/introspect","/api/auth/outbound/authentication",
+            "/api/auth/token", "/api/auth/logout", "/api/auth/introspect", "/api/auth/outbound/authentication",
             "/api/users/register"
     };
-    CustomJwtDecoder customJwtDecoder;
 
+    CustomJwtDecoder customJwtDecoder;
+    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    JwtExceptionFilter jwtExceptionFilter;
+
+    // FilterChain cho các API (dùng JWT)
+    // Đặt @Order(1) để đảm bảo nó được ưu tiên xử lý trước
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
+    @Order(1)
+    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/api/**")
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Thêm custom filter trước BearerTokenAuthenticationFilter
+                .addFilterBefore(jwtExceptionFilter,
+                        org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.class)
+                .oauth2ResourceServer(oauth2 -> {
+                    oauth2.jwt(jwt -> jwt.decoder(customJwtDecoder)
+                            .jwtAuthenticationConverter(jwtAuthenticationConverter()));
+                    oauth2.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                })
+                .exceptionHandling(ex -> {
+                    ex.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                    ex.accessDeniedHandler((request, response, accessDeniedException) -> {
+                        jwtAuthenticationEntryPoint.commence(request, response,
+                                new org.springframework.security.core.AuthenticationException("Access denied") {
+                                });
+                    });
+                })
+                .formLogin(AbstractHttpConfigurer::disable);
+
+        return http.build();
+    }
+
+    // FilterChain cho Admin (dùng Session)
+    // Đặt @Order(2) để nó xử lý các request còn lại
+    @Bean
+    @Order(2)
+    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
+        http
+                // securityMatcher("/**") sẽ được áp dụng cho những gì không khớp với filter
+                // chain ở trên
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/**").hasRole("ADMIN")
-                        .anyRequest()
-                        .authenticated()).formLogin(form -> form.loginPage("/login")
+                        .requestMatchers("/login").permitAll()
+                        .anyRequest().hasRole("ADMIN"))
+                .formLogin(form -> form
+                        .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true").permitAll());
-
-        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
-                        .decoder(customJwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-
-        return httpSecurity.build();
+                        .failureUrl("/login?error=true"))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+        return http.build();
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter() {
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowCredentials(true); // Cho phép cookie/token nếu có
-        config.addAllowedOrigin("http://localhost:3000"); // Chỉ cho frontend truy cập
-        config.addAllowedHeader("*"); // Có thể refine nếu muốn chặt chẽ hơn
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
 }

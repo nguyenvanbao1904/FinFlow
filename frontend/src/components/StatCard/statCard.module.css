@@ -60,28 +60,8 @@
   background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
 }
 
-.savingsCard .cardIcon {
+.savingCard .cardIcon {
   background: linear-gradient(135deg, var(--success-color), #34d399);
-}
-
-.cardTrend {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-}
-
-.cardTrend.positive {
-  color: var(--success-color);
-  background: rgba(16, 185, 129, 0.1);
-}
-
-.cardTrend.negative {
-  color: var(--expense-color);
-  background: rgba(239, 68, 68, 0.1);
 }
 
 .cardContent h3 {

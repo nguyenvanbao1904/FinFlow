@@ -26,3 +26,6 @@ jwt:
   signerKey: ${FINFLOW_JWTSIGNERKEY}
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
+
+pageable:
+  size: 3

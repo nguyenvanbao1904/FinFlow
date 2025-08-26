@@ -11,8 +11,13 @@
 }
 
 .transactionItem:hover {
-  transform: translateX(4px);
+  transform: translateY(4px);
   border-color: var(--primary-blue);
+}
+
+.transactionItem:hover .transactionActions {
+  opacity: 1;
+  visibility: visible;
 }
 
 .transactionIcon {
@@ -50,6 +55,13 @@
   font-size: 0.8rem;
 }
 
+.transactionRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
 .transactionAmount {
   font-weight: 700;
   font-size: 1.1rem;
@@ -61,4 +73,52 @@
 
 .transactionAmount.expense {
   color: var(--expense-color);
+}
+
+.transactionActions {
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.actionButton {
+  padding: 0.5rem !important;
+  min-width: auto !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.85rem !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.actionButton:hover {
+  background: var(--primary-blue) !important;
+  color: white !important;
+  border-color: var(--primary-blue) !important;
+}
+
+.deleteButton:hover {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .transactionActions {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .actionButton {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.8rem !important;
+  }
 }

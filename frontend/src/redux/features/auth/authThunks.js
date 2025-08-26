@@ -1,74 +1,106 @@
-import { login, getUser, logout } from "./authSlice";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { endpoints, publicApis, authApis } from "../../../configs/apis";
 import cookie from "react-cookies";
 
-export const loginUser = (credentials, navigate) => async (dispatch) => {
-  try {
-    let response = await publicApis.post(endpoints.auth.token, credentials);
-
-    dispatch(login({ token: response.data.data.token }));
-    cookie.save("token", response.data.data.token);
-
-    let userResponse = await authApis().get(endpoints.users.my_info);
-    dispatch(getUser({ user: userResponse.data.data }));
-    navigate("/dashboard");
-  } catch (error) {
-    console.error("Login error:", error);
+const handleAuthError = (error) => {
+  if (error.response?.status === 401) {
+    return "Authentication failed";
   }
+  return error.response?.data?.message || error.message || "An error occurred";
 };
 
-export const logoutUser = (navigate) => async (dispatch) => {
-  try {
-    let response = await publicApis.post(endpoints.auth.logout, {
-      token: cookie.load("token"),
-    });
-    console.log("Logout response:", response.data.code);
-    if (response.data.code === 1000) {
-      console.log("Logout successful");
-      dispatch(logout());
-      cookie.remove("token");
-      navigate("/login");
-    }
-  } catch (error) {
-    console.error("Logout error:", error);
-  }
-};
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async ({ credentials, navigate }, { rejectWithValue }) => {
+    try {
+      const response = await publicApis.post(endpoints.auth.token, credentials);
+      const token = response.data.data.token;
 
-export const outboundLogin = (authCode, navigate) => async (dispatch) => {
-  try {
-    let response = await publicApis.post(
-      `${endpoints.auth.outbound}?code=${authCode}`,
-      null
-    );
-    dispatch(login({ token: response.data.data.token }));
-    cookie.save("token", response.data.data.token);
-
-    let userResponse = await authApis().get(endpoints.users.my_info);
-    dispatch(getUser({ user: userResponse.data.data }));
-    navigate("/dashboard");
-  } catch (error) {
-    console.error("Outbound login error:", error);
-  }
-};
-
-export const introspect = (token) => async (dispatch) => {
-  try {
-    let response = await publicApis.post(endpoints.auth.introspect, { token });
-    if (response.data.data.valid) {
-      dispatch(login({ token }));
       cookie.save("token", token);
-      try {
-        let userResponse = await authApis().get(endpoints.users.my_info);
-        dispatch(getUser({ user: userResponse.data.data }));
-      } catch (userError) {
-        console.error("Failed to fetch user info:", userError);
-      }
-    } else {
-      console.error("Token introspection failed: Token is invalid");
-      cookie.remove("token");
+
+      const userResponse = await authApis().get(endpoints.users.my_info);
+      const user = userResponse.data.data;
+
+      navigate("/dashboard");
+
+      return { token, user };
+    } catch (error) {
+      return rejectWithValue(handleAuthError(error));
     }
-  } catch (error) {
-    console.error("Introspection error");
-    cookie.remove("token");
   }
-};
+);
+
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async ({ navigate }, { rejectWithValue }) => {
+    try {
+      const response = await publicApis.post(endpoints.auth.logout, {
+        token: cookie.load("token"),
+      });
+
+      if (response.data.code === 1000) {
+        cookie.remove("token");
+        navigate("/login");
+        return;
+      }
+
+      throw new Error("Logout failed");
+    } catch (error) {
+      return rejectWithValue(handleAuthError(error));
+    }
+  }
+);
+
+export const outboundLogin = createAsyncThunk(
+  "auth/outboundLogin",
+  async ({ authCode, navigate }, { rejectWithValue }) => {
+    try {
+      const response = await publicApis.post(
+        `${endpoints.auth.outbound}?code=${authCode}`,
+        null
+      );
+      const token = response.data.data.token;
+
+      cookie.save("token", token);
+
+      const userResponse = await authApis().get(endpoints.users.my_info);
+      const user = userResponse.data.data;
+
+      navigate("/dashboard");
+
+      return { token, user };
+    } catch (error) {
+      return rejectWithValue(handleAuthError(error));
+    }
+  }
+);
+
+export const introspect = createAsyncThunk(
+  "auth/introspect",
+  async ({ token }, { rejectWithValue }) => {
+    try {
+      const response = await publicApis.post(endpoints.auth.introspect, {
+        token,
+      });
+
+      if (response.data.data.valid) {
+        cookie.save("token", token);
+
+        try {
+          const userResponse = await authApis().get(endpoints.users.my_info);
+          const user = userResponse.data.data;
+          return { token, user };
+        } catch (userError) {
+          cookie.remove("token");
+          throw userError;
+        }
+      } else {
+        cookie.remove("token");
+        throw new Error("Token is invalid");
+      }
+    } catch (error) {
+      cookie.remove("token");
+      return rejectWithValue(handleAuthError(error));
+    }
+  }
+);

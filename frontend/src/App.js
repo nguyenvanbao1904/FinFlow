@@ -1,36 +1,50 @@
 // App.js
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
-import { Provider, useDispatch } from 'react-redux'
-import store from './redux/store';
+import { Provider, useDispatch } from "react-redux";
+import store from "./redux/store";
 import DashboardPage from "./pages/DashBoardPage/DashBoardPage";
 import Authenticate from "./pages/LoginPage/Authenticate";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import { useEffect } from "react";
-import cookie from 'react-cookies'
+import cookie from "react-cookies";
 import { introspect } from "./redux/features/auth/authThunks";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import MainLayout from "./layout/MainLayout/MainLayout";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AppContent = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const token = cookie.load('token');
+    const token = cookie.load("token");
     if (token) {
-      dispatch(introspect(token));
+      dispatch(introspect({ token }));
     }
   }, [dispatch]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/authenticate" element={<Authenticate />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <Routes>
+          {/* public routers */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/authenticate" element={<Authenticate />} />
+
+          {/* protected routers */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<MainLayout />}>
+              <Route path="/dashboard" element={<DashboardPage />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+      <ToastContainer />
+    </>
   );
 };
 

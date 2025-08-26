@@ -1,5 +1,7 @@
 package com.nvb.fin_flow.dto.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.nvb.fin_flow.deserializer.IconDeserializer;
 import com.nvb.fin_flow.entity.Icon;
 import com.nvb.fin_flow.enums.CategoryType;
 import lombok.*;
@@ -15,5 +17,6 @@ public class CategoryCreationRequest {
     String name;
     CategoryType type;
     String colorCode;
+    @JsonDeserialize(using = IconDeserializer.class)
     Icon icon;
 }

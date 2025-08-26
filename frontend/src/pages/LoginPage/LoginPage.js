@@ -32,7 +32,7 @@ const LoginPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(loginUser({ username, password }, navigate));
+    dispatch(loginUser({ credentials: { username, password }, navigate }));
   };
 
   const handleGoogleLogin = (e) => {

@@ -47,3 +47,8 @@
   margin-bottom: 1rem;
   font-weight: 600;
 }
+
+.chartBody {
+  height: 300px;
+  position: relative;
+}

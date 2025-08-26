@@ -19,7 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-
+    @Column(unique = true)
     String username;
     String password;
     String firstName;
@@ -32,12 +32,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     Set<Transaction> transactions;
 
-    @OneToMany(mappedBy = "createdBy")
+    @OneToMany(mappedBy = "user")
     Set<Category> customCategories;
 
-    @OneToMany(mappedBy = "createdBy")
+    @OneToMany(mappedBy = "user")
     Set<Budget> budgets;
 
-    @OneToMany(mappedBy = "createdBy")
+    @OneToMany(mappedBy = "user")
     Set<Goal> goals;
 }

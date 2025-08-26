@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -39,9 +40,10 @@ public class CustomJwtDecoder implements JwtDecoder {
             var response = authenticationService.introspect(
                     IntrospectRequest.builder().token(token).build());
 
-            if (!response.isValid()) throw new JwtException("Token invalid");
-        } catch (JOSEException | ParseException e) {
-            throw new JwtException(e.getMessage());
+            if (!response.isValid())
+                throw new JwtException("Token invalid");
+        } catch (Exception e) {
+            throw new JwtException("Token invalid");
         }
 
         if (Objects.isNull(nimbusJwtDecoder)) {

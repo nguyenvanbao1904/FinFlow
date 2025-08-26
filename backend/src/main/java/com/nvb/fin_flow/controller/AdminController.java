@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -40,14 +41,13 @@ public class AdminController {
 
     @GetMapping("/categories")
     public String getCategories(Model model, Authentication authentication, @RequestParam Map<String, String> params) {
-        String username = "ADMIN";
-        if(authentication != null){
-            username = authentication.getName();
-        }
-        model.addAttribute("categoriesIncome", categoryService.getCategoriesByUsername(username, CategoryType.INCOME, params));
-        model.addAttribute("categoriesExpense", categoryService.getCategoriesByUsername(username, CategoryType.EXPENSE, params));
+        params.put("username", authentication.getName());
+        Set<CategoryResponse> categories = categoryService.getCategories(params).getCategoryResponses();
+        model.addAttribute("categoriesIncome", categories.stream().filter(c -> c.getType().equals(CategoryType.INCOME.toString())));
+        model.addAttribute("categoriesExpense", categories.stream().filter(c -> c.getType().equals(CategoryType.EXPENSE.toString())));
+        model.addAttribute("categoriesSaving", categories.stream().filter(c -> c.getType().equals(CategoryType.SAVING.toString())));
         model.addAttribute("iconCreationRequest",  new IconCreationRequest());
-        model.addAttribute("icons", iconService.getIcons());
+        model.addAttribute("icons", iconService.getIcons(params).getIconResponses()); // ti sua
         model.addAttribute("categoryCreationRequest", new CategoryCreationRequest());
         return "admin/categoryManagement";
     }
@@ -56,14 +56,14 @@ public class AdminController {
     public String getCategory(@PathVariable("id") String id, Model model) {
         CategoryCreationRequest categoryCreationRequest = categoryMapper.toCategoryCreationRequest(categoryService.getCategoryById(id));
         model.addAttribute("categoryCreationRequest", categoryCreationRequest);
-        model.addAttribute("icons",  iconService.getIcons());
+        model.addAttribute("icons",  iconService.getIcons(Map.of("page","1")).getIconResponses()); // ti sua
         return  "admin/categoryManagementEdit";
     }
 
 
     @PostMapping("/categories")
     public String addCategory(@ModelAttribute("categoryCreationRequest") @Valid CategoryCreationRequest categoryCreationRequest) {
-        categoryService.addOrCategory(categoryCreationRequest);
+        categoryService.addOrUpdateCategory(categoryCreationRequest);
         return "redirect:/categories";
     }
 

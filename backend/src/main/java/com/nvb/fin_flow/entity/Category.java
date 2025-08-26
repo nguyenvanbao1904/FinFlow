@@ -4,17 +4,18 @@ import com.nvb.fin_flow.enums.CategoryType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Category {
+public class Category extends BaseTable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -27,15 +28,15 @@ public class Category {
     @Column(nullable = false)
     CategoryType type;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    User createdBy;
-
     @OneToMany(mappedBy = "category")
     Set<Budget> budgets;
 
     @OneToMany(mappedBy = "category")
     Set<Transaction> transactions;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
 
     @ManyToOne
     @JoinColumn(name = "icon_id", nullable = false)

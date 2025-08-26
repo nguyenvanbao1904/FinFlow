@@ -1,12 +1,12 @@
 package com.nvb.fin_flow.repository.projection;
 
-public interface CategoryWithIconAndCreatedBy {
+public interface CategoryWithIconAndUser {
     String getId();
     String getName();
     String getColorCode();
     String getType();
     IconInfo getIcon();
-    String getCreatedByUsername();
+    String getUserUsername();
 
     interface IconInfo{
         String getId();

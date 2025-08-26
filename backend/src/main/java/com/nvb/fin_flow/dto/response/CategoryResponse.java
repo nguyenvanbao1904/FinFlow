@@ -13,6 +13,6 @@ public class CategoryResponse {
     String name;
     String colorCode;
     String type;
-    String createdByUsername;
+    String userUsername;
     IconResponse icon;
 }

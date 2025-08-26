@@ -1,29 +1,53 @@
-import axios from "axios"
-import cookie from 'react-cookies'
-const BASE_URL = process.env.REACT_APP_API_BASE_URL
+import axios from "axios";
+import cookie from "react-cookies";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export const endpoints = {
-    'auth' : {
-        'token': '/auth/token',
-        'logout': '/auth/logout',
-        'outbound': '/auth/outbound/authentication',
-        'introspect': '/auth/introspect',
-    },
-    'users': {
-        'my_info': '/users/my-info',
-        'register': '/users/register',
-    },
-}
+  auth: {
+    token: "/auth/token",
+    logout: "/auth/logout",
+    outbound: "/auth/outbound/authentication",
+    introspect: "/auth/introspect",
+  },
+  users: {
+    my_info: "/users/my-info",
+    register: "/users/register",
+    create_password: "/users/create-password",
+  },
+  categories: {
+    get: "/categories",
+    create: "/categories",
+  },
+  transactions: {
+    get: "/transactions",
+    create: "/transactions",
+    summary: "/transactions/summary",
+    delete: "/transactions",
+  },
+  statistics: {
+    summary_transaction: "/statistics/summary-transaction",
+    category_distribution: "/statistics/category-distribution",
+  },
+  icons: {
+    get: "/icons",
+  },
+};
 
-export const authApis = ()=>{
-    return axios.create({
-        baseURL: BASE_URL,
-        headers: {
-            'Authorization': `Bearer ${cookie.load("token")}`
-        }
-    })
-}
+export const authApis = () => {
+  let token = cookie.load("token");
+
+  if (!token) {
+    window.location.href = "/login";
+    return;
+  }
+  return axios.create({
+    baseURL: BASE_URL,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 export const publicApis = axios.create({
-    baseURL: BASE_URL
+  baseURL: BASE_URL,
 });

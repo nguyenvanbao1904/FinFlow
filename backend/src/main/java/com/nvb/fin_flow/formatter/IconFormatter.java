@@ -23,11 +23,8 @@ public class IconFormatter implements Formatter<Icon> {
 
     @Override
     public Icon parse(String id, Locale locale) {
-        Icon icon = iconRepository.findById(id).orElse(null);
-        if (icon == null) {
-            throw new AppException(ErrorCode.INVALID_REFERENCE, Map.of("entity", "Icon"));
-        }
-        return icon;
+        return iconRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_REFERENCE, Map.of("entity", "Icon")));
 
     }
 
