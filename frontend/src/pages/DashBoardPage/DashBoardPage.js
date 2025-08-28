@@ -24,12 +24,15 @@ import useApi from "../../hooks/useApi";
 import { endpoints } from "../../configs/apis";
 import AddTransactionModal from "../../components/Modal/AddTransactionModal";
 import CreatePasswordModal from "../../components/Modal/CreatePasswordModal";
+import { setPeriod } from "../../redux/features/transaction/transactionSlice";
 
 const DashboardPage = () => {
   const transactions = useSelector(selectTransactions);
   const period = useSelector(selectPeriod);
   const summary = useSelector(selectSummary);
   const [openCreatePasswordModal, setOpenCreatePasswordModal] = useState(false);
+  const [openAddTransactionModal, setOpenAddTransactionModal] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState(null); // State cho transaction đang edit
   const categoryExpenseDistribution = useSelector(
     selectCategoryExpenseDistribution
   );
@@ -60,12 +63,9 @@ const DashboardPage = () => {
     [dispatch, period]
   );
 
-  // State cho modal
-  const [openModalEditTransaction, setOpenModalEditTransaction] =
-    useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
-
   const refreshDashboardData = useCallback(async () => {
+    console.log(1);
+
     setTransactionPage(1);
     await Promise.all([
       dispatch(fetchSummary({ period })),
@@ -74,7 +74,29 @@ const DashboardPage = () => {
       dispatch(fetchCategoryDistribution({ period, type: "INCOME" })),
     ]);
   }, [dispatch, period]);
+
   const user = useSelector(selectUser);
+
+  const handleChangePeriod = useCallback(
+    (startDate, endDate, type) => {
+      if (
+        !(
+          period.type === type &&
+          period.startDate === startDate &&
+          period.endDate === endDate
+        )
+      ) {
+        dispatch(
+          setPeriod({
+            type: type,
+            startDate: startDate,
+            endDate: endDate,
+          })
+        );
+      }
+    },
+    [dispatch, period]
+  );
 
   useEffect(() => {
     refreshDashboardData();
@@ -188,8 +210,8 @@ const DashboardPage = () => {
         "GET",
         `${endpoints.transactions.get}/${transactionId}`
       );
-      setSelectedTransaction(response.data);
-      setOpenModalEditTransaction(true);
+      setEditingTransaction(response.data);
+      setOpenAddTransactionModal(true);
     } catch (error) {
       console.error("Error fetching transaction:", error);
       alert("Có lỗi xảy ra khi tải thông tin giao dịch");
@@ -211,9 +233,9 @@ const DashboardPage = () => {
     }
   };
 
-  const handleCloseEditModal = () => {
-    setOpenModalEditTransaction(false);
-    setSelectedTransaction(null);
+  const handleCloseModal = () => {
+    setOpenAddTransactionModal(false);
+    setEditingTransaction(null);
   };
 
   useEffect(() => {
@@ -222,9 +244,20 @@ const DashboardPage = () => {
     }
   }, [user]);
 
+  const handleOpenAddTransactionModal = () => {
+    setOpenAddTransactionModal(true);
+  };
+
   return (
     <>
-      <MainHeader />
+      <MainHeader
+        title="Dashboard"
+        subTitle="Tổng quan tài chính của bạn"
+        onChangePeriod={handleChangePeriod}
+        buttonText="Thêm giao dịch"
+        buttonIcon="fa-solid fa-plus"
+        onClickButton={handleOpenAddTransactionModal}
+      />
       <section className={style.overviewSection}>
         {statusLoading.summary === "loading" ? (
           <div>
@@ -240,7 +273,12 @@ const DashboardPage = () => {
                   type={key}
                   content={{
                     title: key,
-                    period: period.type,
+                    period:
+                      period.type === "WEEK"
+                        ? "Tuần"
+                        : period.type === "MONTH"
+                        ? "Tháng"
+                        : "Năm",
                     value: `${formatCurrency(item)}`,
                   }}
                 />
@@ -314,11 +352,13 @@ const DashboardPage = () => {
           )}
         </ContentCard>
       </section>
+
       <AddTransactionModal
-        openModal={openModalEditTransaction}
-        closeModalHandler={handleCloseEditModal}
-        transaction={selectedTransaction}
+        openModal={openAddTransactionModal}
+        closeModalHandler={handleCloseModal}
+        transaction={editingTransaction}
       />
+
       <CreatePasswordModal
         openModal={openCreatePasswordModal}
         closeModalHandler={() => setOpenCreatePasswordModal(false)}

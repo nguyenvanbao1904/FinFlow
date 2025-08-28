@@ -4,16 +4,21 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/features/auth/authSelectors";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/features/auth/authThunks";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../Button/Button";
 
 const Sidebar = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     dispatch(logoutUser({ navigate }));
+  };
+
+  const isActiveLink = (path) => {
+    return location.pathname === path;
   };
 
   return (
@@ -28,23 +33,48 @@ const Sidebar = () => {
       </div>
 
       <nav className={Style.sidebarNav}>
-        <Link to="/dashboard" className={`${Style.navItem} ${Style.active}`}>
+        <Link
+          to="/dashboard"
+          className={`${Style.navItem} ${
+            isActiveLink("/dashboard") ? Style.active : ""
+          }`}
+        >
           <i className="fa-solid fa-chart-line"></i>
           <span>Dashboard</span>
         </Link>
-        <Link to="/budgets" className={Style.navItem}>
+        <Link
+          to="/budget"
+          className={`${Style.navItem} ${
+            isActiveLink("/budget") ? Style.active : ""
+          }`}
+        >
           <i className="fa-solid fa-bullseye"></i>
           <span>Ngân sách</span>
         </Link>
-        <Link to="/investment" className={Style.navItem}>
+        <Link
+          to="/investment"
+          className={`${Style.navItem} ${
+            isActiveLink("/investment") ? Style.active : ""
+          }`}
+        >
           <i className="fa-solid fa-briefcase"></i>
           <span>Đầu tư</span>
         </Link>
-        <Link to="/planner" className={Style.navItem}>
+        <Link
+          to="/tools"
+          className={`${Style.navItem} ${
+            isActiveLink("/tool") ? Style.active : ""
+          }`}
+        >
           <i className="fa-solid fa-calculator"></i>
           <span>Công cụ</span>
         </Link>
-        <Link to="#" className={Style.navItem}>
+        <Link
+          to="/reports"
+          className={`${Style.navItem} ${
+            isActiveLink("/reports") ? Style.active : ""
+          }`}
+        >
           <i className="fa-solid fa-chart-pie"></i>
           <span>Báo cáo</span>
         </Link>
@@ -61,7 +91,12 @@ const Sidebar = () => {
           </div>
         </div>
         <div className={Style.sidebarActions}>
-          <Link to="#" className={Style.navItem}>
+          <Link
+            to="/settings"
+            className={`${Style.navItem} ${
+              isActiveLink("/settings") ? Style.active : ""
+            }`}
+          >
             <i className="fa-solid fa-cog"></i>
             <span>Cài đặt</span>
           </Link>

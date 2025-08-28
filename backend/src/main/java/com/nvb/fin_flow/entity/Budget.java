@@ -20,7 +20,12 @@ public class Budget extends BaseTable {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     BigDecimal amountLimit;
-    LocalDate endAt;
+    LocalDate startDate;
+    LocalDate endDate;
+    Boolean isRecurring;
+    LocalDate nextRecurrenceDate;
+    @Builder.Default
+    Boolean isActive = true;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

@@ -20,6 +20,7 @@ import {
   fetchSummary,
   fetchTransactions,
 } from "../../redux/features/transaction/transactionThunks";
+import { toast } from "react-toastify";
 
 const transactionTypes = [
   {
@@ -171,7 +172,7 @@ const AddTransactionModal = ({
           formData
         );
 
-        alert(data.message);
+        toast.info(data.message);
 
         if (data.code === 200 || data.code === 201) {
           dispatch(fetchSummary({ period }));
@@ -181,7 +182,7 @@ const AddTransactionModal = ({
           closeModalHandler();
         }
       } catch (error) {
-        alert(error.message || "Lỗi không xác định");
+        toast.error("Có lỗi xảy ra, vui lòng thử lại!");
       }
     }
   };

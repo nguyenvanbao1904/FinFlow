@@ -11,6 +11,7 @@ import com.nvb.fin_flow.enums.CategoryType;
 import com.nvb.fin_flow.exception.AppException;
 import com.nvb.fin_flow.exception.ErrorCode;
 import com.nvb.fin_flow.service.StatisticService;
+import com.nvb.fin_flow.utilities.DateUtility;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -23,8 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,7 @@ public class StatisticServiceImpl implements StatisticService {
     QTransaction t = QTransaction.transaction;
     QCategory c = QCategory.category;
     QUser u = QUser.user;
+    DateUtility dateUtility;
 
     @Override
     public TransactionSummaryResponse getTransactionSummary(Map<String, String> params) {
@@ -52,8 +52,8 @@ public class StatisticServiceImpl implements StatisticService {
             throw new AppException(ErrorCode.PARAMS_INVALID);
         }
 
-        LocalDate startDate = convertDate(from);
-        LocalDate endDate =  convertDate(to);
+        LocalDate startDate = dateUtility.convertDate(from);
+        LocalDate endDate =  dateUtility.convertDate(to);
 
         TotalSummaryResponse totalSummary = getTotalSummary(username, startDate, endDate, t, c, u);
 
@@ -79,8 +79,8 @@ public class StatisticServiceImpl implements StatisticService {
         }catch (IllegalArgumentException e){
             throw new AppException(ErrorCode.PARAMS_INVALID);
         }
-        LocalDate startDate = convertDate(from);
-        LocalDate endDate =  convertDate(to);
+        LocalDate startDate = dateUtility.convertDate(from);
+        LocalDate endDate =  dateUtility.convertDate(to);
 
         BigDecimal totalAmount = queryFactory
                 .select(t.amount.sum())
@@ -165,12 +165,4 @@ public class StatisticServiceImpl implements StatisticService {
                 .fetch();
     }
 
-    private LocalDate convertDate(String date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        try {
-            return LocalDate.parse(date, formatter);
-        } catch (DateTimeParseException e) {
-            throw new AppException(ErrorCode.INVALID_DATE_FORMAT);
-        }
-    }
 }

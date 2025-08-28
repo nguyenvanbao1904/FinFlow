@@ -1,0 +1,69 @@
+.overviewCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  max-height: 600px;
+  overflow: scroll;
+  padding: 1rem;
+}
+
+.budgetCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.addNewCard {
+  border: 2px dashed var(--border-color);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.addNewCard:hover {
+  border-color: var(--primary-blue);
+  background: rgba(62, 123, 255, 0.05);
+}
+
+.addNewContent {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.addIcon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.addNewCard:hover .addIcon {
+  background: var(--primary-blue);
+  color: white;
+  transform: scale(1.1);
+}
+
+.addNewContent h4 {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.addNewContent p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}

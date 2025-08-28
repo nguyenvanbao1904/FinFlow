@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.nvb.fin_flow.entity.Icon;
+import com.nvb.fin_flow.entity.Category;
 import com.nvb.fin_flow.exception.AppException;
 import com.nvb.fin_flow.exception.ErrorCode;
-import com.nvb.fin_flow.repository.IconRepository;
+import com.nvb.fin_flow.repository.CategoryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,13 +19,13 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class IconDeserializer extends JsonDeserializer<Icon> {
-    IconRepository iconRepository;
+public class CategoryDeserializer extends JsonDeserializer<Category> {
+    CategoryRepository categoryRepository;
 
     @Override
-    public Icon deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public Category deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         String id = jsonParser.getText();
-        return iconRepository.findById(id)
+        return categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_REFERENCE, Map.of("entity", "Icon")));
     }
 }

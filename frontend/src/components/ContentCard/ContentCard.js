@@ -1,5 +1,5 @@
 import Button from "../Button/Button";
-import contentCard from "./contentCard.module.css";
+import style from "./contentCard.module.css";
 
 const ContentCard = ({
   title,
@@ -23,8 +23,8 @@ const ContentCard = ({
     }
   };
   return (
-    <div className={contentCard.cardContainer}>
-      <div className={contentCard.cardHeader}>
+    <div className={style.cardContainer}>
+      <div className={style.cardHeader}>
         <h3>{title}</h3>
         {titleButton && (
           <Button
@@ -36,7 +36,7 @@ const ContentCard = ({
           />
         )}
       </div>
-      <div className={contentCard.cardBody} onScroll={handleScroll}>
+      <div className={style.cardBody} onScroll={handleScroll}>
         {children}
       </div>
     </div>

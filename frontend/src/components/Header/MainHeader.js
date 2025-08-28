@@ -1,69 +1,55 @@
 import { useEffect, useState } from "react";
 import Button from "../Button/Button";
 import style from "./mainHeader.module.css";
-import AddTransactionModal from "../Modal/AddTransactionModal";
-import { useDispatch, useSelector } from "react-redux";
-import { selectPeriod } from "../../redux/features/transaction/transactionSelectors";
-import { setPeriod } from "../../redux/features/transaction/transactionSlice";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 
-const MainHeader = () => {
-  const [openModal, setOpenModal] = useState(false);
-  const [transactionPeriod, setTransactionPeriod] = useState("WEEK");
-  const dispatch = useDispatch();
+const MainHeader = ({
+  title,
+  subTitle,
+  onChangePeriod,
+  buttonText,
+  buttonIcon,
+  onClickButton,
+}) => {
+  const [typePeriod, settypePeriod] = useState("WEEK");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const period = useSelector(selectPeriod);
 
   const handleClickPeriod = (period) => {
-    setTransactionPeriod(period);
+    settypePeriod(period);
     setCurrentDate(dayjs());
   };
 
   const handlePrev = () => {
-    setCurrentDate(currentDate.subtract(1, transactionPeriod.toLowerCase()));
+    setCurrentDate(currentDate.subtract(1, typePeriod.toLowerCase()));
   };
 
   const handleNext = () => {
-    setCurrentDate(currentDate.add(1, transactionPeriod.toLowerCase()));
+    setCurrentDate(currentDate.add(1, typePeriod.toLowerCase()));
   };
 
   useEffect(() => {
     const newStartDate = currentDate
-      .startOf(transactionPeriod.toLowerCase())
+      .startOf(typePeriod.toLowerCase())
       .format("DD/MM/YYYY");
     const newEndDate = currentDate
-      .endOf(transactionPeriod.toLowerCase())
+      .endOf(typePeriod.toLowerCase())
       .format("DD/MM/YYYY");
 
     setStartDate(newStartDate);
     setEndDate(newEndDate);
 
-    if (
-      !(
-        period.type === transactionPeriod &&
-        period.startDate === newStartDate &&
-        period.endDate === newEndDate
-      )
-    ) {
-      dispatch(
-        setPeriod({
-          type: transactionPeriod,
-          startDate: newStartDate,
-          endDate: newEndDate,
-        })
-      );
-    }
-  }, [currentDate, transactionPeriod, dispatch, period]);
+    onChangePeriod(newStartDate, newEndDate, typePeriod);
+  }, [currentDate, typePeriod, onChangePeriod]);
 
   return (
     <>
       <header className={style.mainHeader}>
         <div className={style.headerLeft}>
-          <h1>Dashboard</h1>
-          <p className={style.headerSubtitle}>Tổng quan tài chính của bạn</p>
+          <h1>{title}</h1>
+          <p className={style.headerSubtitle}>{subTitle}</p>
         </div>
         <div className={style.headerCenter}>
           <Button
@@ -89,38 +75,34 @@ const MainHeader = () => {
                 text="Tuần"
                 isLarge={false}
                 key="week"
-                isPrimary={transactionPeriod === "WEEK"}
+                isPrimary={typePeriod === "WEEK"}
                 onClick={() => handleClickPeriod("WEEK")}
               />
               <Button
                 text="Tháng"
                 isLarge={false}
                 key="month"
-                isPrimary={transactionPeriod === "MONTH"}
+                isPrimary={typePeriod === "MONTH"}
                 onClick={() => handleClickPeriod("MONTH")}
               />
               <Button
                 text="Năm"
                 isLarge={false}
                 key="year"
-                isPrimary={transactionPeriod === "YEAR"}
+                isPrimary={typePeriod === "YEAR"}
                 onClick={() => handleClickPeriod("YEAR")}
               />
             </div>
             <Button
-              text="Thêm giao dịch"
-              icon="fa-solid fa-plus"
+              text={buttonText}
+              icon={buttonIcon}
               isLarge={false}
               isPrimary={true}
-              onClick={() => setOpenModal(true)}
+              onClick={onClickButton}
             />
           </div>
         </div>
       </header>
-      <AddTransactionModal
-        openModal={openModal}
-        closeModalHandler={() => setOpenModal(false)}
-      />
     </>
   );
 };

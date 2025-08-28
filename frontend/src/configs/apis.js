@@ -31,6 +31,11 @@ export const endpoints = {
   icons: {
     get: "/icons",
   },
+  budgets: {
+    get: "/budgets",
+    create: "/budgets",
+    delete: "/budgets",
+  },
 };
 
 export const authApis = () => {
