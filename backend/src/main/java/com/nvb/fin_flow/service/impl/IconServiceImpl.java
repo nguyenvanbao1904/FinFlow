@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -39,7 +40,8 @@ public class IconServiceImpl implements IconService {
         Page<Icon> icons = iconRepository.findAll(page);
         return IconPageableResponse.builder()
                 .totalPages(icons.getTotalPages())
-                .iconResponses(new LinkedHashSet<>(icons.getContent().stream().map(iconMapper::toResponse).collect(Collectors.toList())))
+                .iconResponses(new LinkedHashSet<>(
+                        icons.getContent().stream().map(iconMapper::toResponse).collect(Collectors.toList())))
                 .build();
     }
 
@@ -51,10 +53,18 @@ public class IconServiceImpl implements IconService {
 
     @Override
     public void deleteIcon(String id) {
-        try{
+        try {
             iconRepository.deleteById(id);
-        }catch (DataIntegrityViolationException ex){
-            throw new AppException(ErrorCode.SQL_EXCEPTION, Map.of("ms", ex.getCause().getMessage().split("\\[")[0].trim()));
+        } catch (DataIntegrityViolationException ex) {
+            throw new AppException(ErrorCode.SQL_EXCEPTION,
+                    Map.of("ms", ex.getCause().getMessage().split("\\[")[0].trim()));
         }
+    }
+
+    @Override
+    public Set<IconResponse> getIconsNonPageable() {
+        return iconRepository.findAll().stream()
+                .map(iconMapper::toResponse)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

@@ -20,27 +20,32 @@
             <button class="btn btn-primary" id="add-category-btn">Thêm Hạng mục mới</button>
         </div>
     </header>
+    
     <form th:action="@{/categories}">
         <div class="form-group">
-            <input type="text" class="search-box" placeholder="Tìm kiếm" name="q">
+            <input type="text" class="search-box" placeholder="Tìm kiếm" name="q" th:value="${param.q}">
         </div>
         <div class="form-group">
             <label>Loại hạng mục</label>
             <select name="type">
-                <option value="expense">Chi tiêu</option>
-                <option value="income">Thu nhập</option>
-                <option value="all">Tất cả</option>
+                <option value="expense" th:selected="${param.type == 'expense'}">Chi tiêu</option>
+                <option value="income" th:selected="${param.type == 'income'}">Thu nhập</option>
+                <option value="saving" th:selected="${param.type == 'saving'}">Tiết kiệm</option>
+                <option value="all" th:selected="${param.type == 'all'}">Tất cả</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Tìm kiếm</button>
     </form>
+    
     <div class="categories-grid">
+        <!-- Hạng mục Chi tiêu -->
         <div class="category-column">
             <div class="column-header">
                 <h2><i class="fa-solid fa-arrow-down expense-color"></i> Hạng mục Chi tiêu</h2>
+                <span class="category-count" th:text="'Trang ' + ${expenseCurrentPage} + '/' + ${expenseTotalPages}"></span>
             </div>
-            <ul class="category-list" th:each="category : ${categoriesExpense}">
-                <li class="category-item">
+            <ul class="category-list">
+                <li class="category-item" th:each="category : ${categoriesExpense}">
                     <div class="category-icon" th:style="'background-color:' + ${category.colorCode}">
                         <i th:class="${category.icon.iconClass}"></i>
                     </div>
@@ -53,14 +58,39 @@
                     </div>
                 </li>
             </ul>
+            <!-- Pagination cho Chi tiêu -->
+            <div class="pagination-container">
+                <!-- Nút Trang trước -->
+                <div class="pagination-controls" th:if="${expenseCurrentPage > 1 or expenseHasNext}">
+                    <a th:if="${expenseCurrentPage > 1}"
+                       th:href="@{/categories(expensePage=${expenseCurrentPage - 1}, incomePage=${incomeCurrentPage}, savingPage=${savingCurrentPage}, iconPage=${iconCurrentPage}, q=${param.q}, type=${param.type})}" 
+                       class="btn btn-secondary pagination-btn prev-btn">
+                        <i class="fa-solid fa-chevron-left"></i> Trang trước
+                    </a>
+                    
+                    <!-- Hiển thị số trang -->
+                    <span class="pagination-info" th:if="${expenseTotalPages > 1}">
+                        Trang <span th:text="${expenseCurrentPage}">1</span> / <span th:text="${expenseTotalPages}">1</span>
+                    </span>
+                    
+                    <!-- Nút Trang sau -->
+                    <a th:if="${expenseHasNext}"
+                       th:href="@{/categories(expensePage=${expenseCurrentPage + 1}, incomePage=${incomeCurrentPage}, savingPage=${savingCurrentPage}, iconPage=${iconCurrentPage}, q=${param.q}, type=${param.type})}" 
+                       class="btn btn-secondary pagination-btn next-btn">
+                        Trang sau <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
         </div>
 
+        <!-- Hạng mục Thu nhập -->
         <div class="category-column">
             <div class="column-header">
                 <h2><i class="fa-solid fa-arrow-up income-color"></i> Hạng mục Thu nhập</h2>
+                <span class="category-count" th:text="'Trang ' + ${incomeCurrentPage} + '/' + ${incomeTotalPages}"></span>
             </div>
-            <ul class="category-list" th:each="category : ${categoriesIncome}">
-                <li class="category-item">
+            <ul class="category-list">
+                <li class="category-item" th:each="category : ${categoriesIncome}">
                     <div class="category-icon" th:style="'background-color:' + ${category.colorCode}">
                         <i th:class="${category.icon.iconClass}"></i>
                     </div>
@@ -73,14 +103,36 @@
                     </div>
                 </li>
             </ul>
+            <!-- Pagination cho Thu nhập -->
+            <div class="pagination-container">
+                <div class="pagination-controls" th:if="${incomeCurrentPage > 1 or incomeHasNext}">
+                    <a th:if="${incomeCurrentPage > 1}"
+                       th:href="@{/categories(expensePage=${expenseCurrentPage}, incomePage=${incomeCurrentPage - 1}, savingPage=${savingCurrentPage}, iconPage=${iconCurrentPage}, q=${param.q}, type=${param.type})}" 
+                       class="btn btn-secondary pagination-btn prev-btn">
+                        <i class="fa-solid fa-chevron-left"></i> Trang trước
+                    </a>
+                    
+                    <span class="pagination-info" th:if="${incomeTotalPages > 1}">
+                        Trang <span th:text="${incomeCurrentPage}">1</span> / <span th:text="${incomeTotalPages}">1</span>
+                    </span>
+                    
+                    <a th:if="${incomeHasNext}"
+                       th:href="@{/categories(expensePage=${expenseCurrentPage}, incomePage=${incomeCurrentPage + 1}, savingPage=${savingCurrentPage}, iconPage=${iconCurrentPage}, q=${param.q}, type=${param.type})}" 
+                       class="btn btn-secondary pagination-btn next-btn">
+                        Trang sau <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
         </div>
 
+        <!-- Hạng mục Tiết kiệm -->
         <div class="category-column">
             <div class="column-header">
-                <h2><i class="fa-solid fa-arrow-up income-color"></i> Hạng mục Tiết kiệm</h2>
+                <h2><i class="fa-solid fa-piggy-bank saving-color"></i> Hạng mục Tiết kiệm</h2>
+                <span class="category-count" th:text="'Trang ' + ${savingCurrentPage} + '/' + ${savingTotalPages}"></span>
             </div>
-            <ul class="category-list" th:each="category : ${categoriesSaving}">
-                <li class="category-item">
+            <ul class="category-list">
+                <li class="category-item" th:each="category : ${categoriesSaving}">
                     <div class="category-icon" th:style="'background-color:' + ${category.colorCode}">
                         <i th:class="${category.icon.iconClass}"></i>
                     </div>
@@ -93,11 +145,32 @@
                     </div>
                 </li>
             </ul>
+            <!-- Pagination cho Tiết kiệm -->
+            <div class="pagination-container">
+                <div class="pagination-controls" th:if="${savingCurrentPage > 1 or savingHasNext}">
+                    <a th:if="${savingCurrentPage > 1}"
+                       th:href="@{/categories(expensePage=${expenseCurrentPage}, incomePage=${incomeCurrentPage}, savingPage=${savingCurrentPage - 1}, iconPage=${iconCurrentPage}, q=${param.q}, type=${param.type})}" 
+                       class="btn btn-secondary pagination-btn prev-btn">
+                        <i class="fa-solid fa-chevron-left"></i> Trang trước
+                    </a>
+                    
+                    <span class="pagination-info" th:if="${savingTotalPages > 1}">
+                        Trang <span th:text="${savingCurrentPage}">1</span> / <span th:text="${savingTotalPages}">1</span>
+                    </span>
+                    
+                    <a th:if="${savingHasNext}"
+                       th:href="@{/categories(expensePage=${expenseCurrentPage}, incomePage=${incomeCurrentPage}, savingPage=${savingCurrentPage + 1}, iconPage=${iconCurrentPage}, q=${param.q}, type=${param.type})}" 
+                       class="btn btn-secondary pagination-btn next-btn">
+                        Trang sau <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-
     </div>
 </section>
+
 <th:block layout:fragment="extraContent">
+    <!-- Category Modal -->
     <div id="category-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="modal-title">Thêm Hạng mục mới</h3>
@@ -112,6 +185,7 @@
                     <select id="category-type-select" th:field="*{type}">
                         <option value="EXPENSE">Chi tiêu</option>
                         <option value="INCOME">Thu nhập</option>
+                        <option value="SAVING">Tiết kiệm</option>
                     </select>
                 </div>
 
@@ -128,7 +202,6 @@
                                th:data-icon-id="${icon.id}"></i>
                         </div>
                     </div>
-                    <!-- Input ẩn để form vẫn submit iconClass -->
                     <input type="hidden" id="category-icon-input" th:field="*{icon}" required>
                 </div>
 
@@ -172,7 +245,6 @@
         </div>
     </div>
 </th:block>
-
 
 <th:block layout:fragment="pageJs">
     <script th:src="@{/js/categoryManagement.js}"></script>

@@ -35,8 +35,6 @@ public class SecurityConfig {
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     JwtExceptionFilter jwtExceptionFilter;
 
-    // FilterChain cho các API (dùng JWT)
-    // Đặt @Order(1) để đảm bảo nó được ưu tiên xử lý trước
     @Bean
     @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
@@ -46,9 +44,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/icons/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Thêm custom filter trước BearerTokenAuthenticationFilter
                 .addFilterBefore(jwtExceptionFilter,
                         org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.class)
                 .oauth2ResourceServer(oauth2 -> {
@@ -69,14 +67,10 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // FilterChain cho Admin (dùng Session)
-    // Đặt @Order(2) để nó xử lý các request còn lại
     @Bean
     @Order(2)
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
         http
-                // securityMatcher("/**") sẽ được áp dụng cho những gì không khớp với filter
-                // chain ở trên
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()

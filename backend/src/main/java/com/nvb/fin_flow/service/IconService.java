@@ -9,6 +9,10 @@ import java.util.Set;
 
 public interface IconService {
     IconPageableResponse getIcons(Map<String, String> params);
+
     IconResponse addIcon(IconCreationRequest iconCreationRequest);
+
     void deleteIcon(String id);
+
+    Set<IconResponse> getIconsNonPageable();
 }
