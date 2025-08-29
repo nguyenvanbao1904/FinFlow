@@ -1,0 +1,113 @@
+.toolOverviewCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.toolOverviewCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 0;
+  background: linear-gradient(45deg, var(--primary-blue), var(--accent-cyan));
+  transition: height 0.3s ease;
+}
+
+.toolOverviewCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(62, 123, 255, 0.15);
+  border-color: var(--primary-blue);
+}
+
+.toolOverviewCard:hover::before {
+  height: 100%;
+}
+
+.toolOverviewCard.active {
+  border-color: var(--primary-blue);
+  box-shadow: 0 8px 32px rgba(62, 123, 255, 0.2);
+}
+
+.toolOverviewCard.active::before {
+  height: 100%;
+}
+
+.toolIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: 0 8px 20px rgba(62, 123, 255, 0.3);
+}
+
+.toolCardInfo h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.75rem 0;
+}
+
+.toolCardInfo p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 1.5rem 0;
+}
+
+.toolFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toolFeatures li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.toolFeatures li:before {
+  content: "✓";
+  color: var(--success-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.toolStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success-color);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.toolStatus.comingSoon {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning-color);
+}
+
+.toolStatus i {
+  font-size: 0.7rem;
+}

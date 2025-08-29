@@ -15,6 +15,7 @@ import MainLayout from "./layout/MainLayout/MainLayout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BudgetPage from "./pages/BudgetPage/BudgetPage";
+import ToolsPage from "./pages/ToolsPage/ToolsPage";
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -41,6 +42,7 @@ const AppContent = () => {
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/budget" element={<BudgetPage />} />
+              <Route path="/tools" element={<ToolsPage />} />
             </Route>
           </Route>
         </Routes>

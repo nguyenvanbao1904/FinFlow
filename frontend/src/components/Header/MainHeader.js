@@ -11,6 +11,8 @@ const MainHeader = ({
   buttonText,
   buttonIcon,
   onClickButton,
+  isShowPeriod = true,
+  isShowButton = true,
 }) => {
   const [typePeriod, settypePeriod] = useState("WEEK");
   const [startDate, setStartDate] = useState("");
@@ -31,18 +33,20 @@ const MainHeader = ({
   };
 
   useEffect(() => {
-    const newStartDate = currentDate
-      .startOf(typePeriod.toLowerCase())
-      .format("DD/MM/YYYY");
-    const newEndDate = currentDate
-      .endOf(typePeriod.toLowerCase())
-      .format("DD/MM/YYYY");
+    if (isShowPeriod && onChangePeriod) {
+      const newStartDate = currentDate
+        .startOf(typePeriod.toLowerCase())
+        .format("DD/MM/YYYY");
+      const newEndDate = currentDate
+        .endOf(typePeriod.toLowerCase())
+        .format("DD/MM/YYYY");
 
-    setStartDate(newStartDate);
-    setEndDate(newEndDate);
+      setStartDate(newStartDate);
+      setEndDate(newEndDate);
 
-    onChangePeriod(newStartDate, newEndDate, typePeriod);
-  }, [currentDate, typePeriod, onChangePeriod]);
+      onChangePeriod(newStartDate, newEndDate, typePeriod);
+    }
+  }, [currentDate, typePeriod, onChangePeriod, isShowPeriod]);
 
   return (
     <>
@@ -51,55 +55,61 @@ const MainHeader = ({
           <h1>{title}</h1>
           <p className={style.headerSubtitle}>{subTitle}</p>
         </div>
-        <div className={style.headerCenter}>
-          <Button
-            icon="fa-solid fa-angle-left"
-            isLarge={false}
-            isPrimary={false}
-            onClick={handlePrev}
-          />
-          <h3>
-            {startDate} - {endDate}
-          </h3>
-          <Button
-            icon="fa-solid fa-angle-right"
-            isLarge={false}
-            isPrimary={false}
-            onClick={handleNext}
-          />
-        </div>
+        {isShowPeriod && (
+          <div className={style.headerCenter}>
+            <Button
+              icon="fa-solid fa-angle-left"
+              isLarge={false}
+              isPrimary={false}
+              onClick={handlePrev}
+            />
+            <h3>
+              {startDate} - {endDate}
+            </h3>
+            <Button
+              icon="fa-solid fa-angle-right"
+              isLarge={false}
+              isPrimary={false}
+              onClick={handleNext}
+            />
+          </div>
+        )}
         <div className={style.headerRight}>
           <div className={style.headerControls}>
-            <div className={style.timeFilter}>
+            {isShowPeriod && (
+              <div className={style.timeFilter}>
+                <Button
+                  text="Tuần"
+                  isLarge={false}
+                  key="week"
+                  isPrimary={typePeriod === "WEEK"}
+                  onClick={() => handleClickPeriod("WEEK")}
+                />
+                <Button
+                  text="Tháng"
+                  isLarge={false}
+                  key="month"
+                  isPrimary={typePeriod === "MONTH"}
+                  onClick={() => handleClickPeriod("MONTH")}
+                />
+                <Button
+                  text="Năm"
+                  isLarge={false}
+                  key="year"
+                  isPrimary={typePeriod === "YEAR"}
+                  onClick={() => handleClickPeriod("YEAR")}
+                />
+              </div>
+            )}
+            {isShowButton && buttonText && (
               <Button
-                text="Tuần"
+                text={buttonText}
+                icon={buttonIcon}
                 isLarge={false}
-                key="week"
-                isPrimary={typePeriod === "WEEK"}
-                onClick={() => handleClickPeriod("WEEK")}
+                isPrimary={true}
+                onClick={onClickButton}
               />
-              <Button
-                text="Tháng"
-                isLarge={false}
-                key="month"
-                isPrimary={typePeriod === "MONTH"}
-                onClick={() => handleClickPeriod("MONTH")}
-              />
-              <Button
-                text="Năm"
-                isLarge={false}
-                key="year"
-                isPrimary={typePeriod === "YEAR"}
-                onClick={() => handleClickPeriod("YEAR")}
-              />
-            </div>
-            <Button
-              text={buttonText}
-              icon={buttonIcon}
-              isLarge={false}
-              isPrimary={true}
-              onClick={onClickButton}
-            />
+            )}
           </div>
         </div>
       </header>

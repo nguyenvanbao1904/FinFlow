@@ -13,6 +13,7 @@
   --glass-bg: rgba(15, 23, 42, 0.6);
   --border-color: rgba(255, 255, 255, 0.08);
   --bg-tertiary: #1b2340;
+  --warning-color: #f59e0b;
 
   /* Variables for box-shadows (used in light mode) */
   --card-shadow: 0 8px 25px rgba(103, 114, 138, 0.1);

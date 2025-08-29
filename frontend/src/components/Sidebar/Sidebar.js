@@ -63,7 +63,7 @@ const Sidebar = () => {
         <Link
           to="/tools"
           className={`${Style.navItem} ${
-            isActiveLink("/tool") ? Style.active : ""
+            isActiveLink("/tools") ? Style.active : ""
           }`}
         >
           <i className="fa-solid fa-calculator"></i>
