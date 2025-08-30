@@ -1,12 +1,15 @@
 package com.nvb.fin_flow.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import jakarta.persistence.*;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
@@ -15,6 +18,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,6 +29,12 @@ public class User {
     String firstName;
     LocalDate dob;
     String lastName;
+
+    @CreatedDate
+    @Column(name = "register_date", updatable = false)
+    private LocalDateTime registerDate;
+
+    private LocalDateTime lastLogin;
 
     @ManyToMany
     Set<Role> roles;
@@ -37,7 +47,4 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     Set<Budget> budgets;
-
-    @OneToMany(mappedBy = "user")
-    Set<Goal> goals;
 }

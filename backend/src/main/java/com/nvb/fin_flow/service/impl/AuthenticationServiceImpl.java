@@ -34,6 +34,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -98,6 +99,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (!authenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
         var token = generateToken(user);
 
         return AuthenticationResponse.builder().token(token).authenticated(true).build();
@@ -151,6 +154,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         // Generate token
         var token = generateToken(user);
+
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
 
         return AuthenticationResponse.builder()
                 .token(token)
