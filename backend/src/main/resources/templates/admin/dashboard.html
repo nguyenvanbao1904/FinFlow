@@ -22,7 +22,7 @@
         <div class="stat-card">
             <i class="fa-solid fa-users"></i>
             <div class="stat-info">
-                <span class="stat-value">15,789</span>
+                <span class="stat-value" th:text="${totalUser}"></span>
                 <span class="stat-label">Tổng người dùng</span>
             </div>
         </div>
@@ -30,7 +30,8 @@
         <div class="stat-card">
             <i class="fa-solid fa-user-plus"></i>
             <div class="stat-info">
-                <span class="stat-value">+256</span>
+                <span class="stat-value"
+                      th:text="${usersThisMonth > 0} ? '+' + ${usersThisMonth} : ${usersThisMonth}"></span>
                 <span class="stat-label">Người dùng mới (Tháng này)</span>
             </div>
         </div>
@@ -38,19 +39,32 @@
         <div class="stat-card">
             <i class="fa-solid fa-user-clock"></i>
             <div class="stat-info">
-                <span class="stat-value">3,120</span>
+                <span class="stat-value" th:text="${usersLoggedLast24h}"></span>
                 <span class="stat-label">Người dùng hoạt động (24h)</span>
             </div>
         </div>
     </div>
 
-    <div class="chart-container">
+    <div class="chart-header">
         <h3>Biểu đồ Tăng trưởng Người dùng</h3>
+        <form method="get" class="year-form">
+            <label for="year">Chọn năm:</label>
+            <input type="number" id="year" name="year"
+                   th:value="${param.year != null ? param.year : #dates.format(#dates.createNow(),'yyyy')}"
+                   min="2000" max="2100" />
+            <button type="submit">Xem</button>
+        </form>
+    </div>
+
+    <div class="chart-container">
         <canvas id="user-growth-chart" height="100"></canvas>
     </div>
 </section>
 
 <th:block layout:fragment="pageJs">
+    <script th:inline="javascript">
+        const statistics = /*[[${statistics}]]*/ [];
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:src="@{/js/dashboard.js}"></script>
 </th:block>

@@ -47,3 +47,37 @@
 .chart-container h3 {
     margin: 0 0 1rem 0;
 }
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.year-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.year-form input[type="number"] {
+    width: 80px;
+    padding: 0.3rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.year-form button {
+    padding: 0.4rem 0.8rem;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.year-form button:hover {
+    background-color: #2b5fd6;
+}

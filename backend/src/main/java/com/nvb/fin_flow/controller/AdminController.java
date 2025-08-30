@@ -9,13 +9,17 @@ import com.nvb.fin_flow.dto.response.IconResponse;
 import com.nvb.fin_flow.entity.Icon;
 import com.nvb.fin_flow.enums.CategoryType;
 import com.nvb.fin_flow.mapper.CategoryMapper;
+import com.nvb.fin_flow.repository.UserRepository;
 import com.nvb.fin_flow.service.CategoryService;
 import com.nvb.fin_flow.service.IconService;
+import com.nvb.fin_flow.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -34,9 +38,26 @@ public class AdminController {
     CategoryService categoryService;
     IconService iconService;
     CategoryMapper categoryMapper;
+    UserService userService;
 
     @GetMapping("/")
-    public String dashboard() {
+    public String dashboard(Model model, @RequestParam Map<String, String> params) {
+        model.addAttribute("totalUser", userService.getTotalUser());
+        // Tính ngày cho tháng hiện tại
+        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusSeconds(1);
+        long usersThisMonth = userService.getTotalUserByRegisterDateBetween(startOfMonth, endOfMonth);
+        model.addAttribute("usersThisMonth", usersThisMonth);
+
+        // Tính cho 24h gần nhất
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime yesterday = now.minusHours(24);
+        long usersLoggedLast24h = userService.getTotalUserByLastLoginBetween(yesterday, now);
+        model.addAttribute("usersLoggedLast24h", usersLoggedLast24h);
+
+
+        String year = params.getOrDefault("year", LocalDate.now().getYear() + "");
+        model.addAttribute("statistics", userService.getNewUsersByMonth(Integer.parseInt(year)));
         return "admin/dashboard";
     }
 
