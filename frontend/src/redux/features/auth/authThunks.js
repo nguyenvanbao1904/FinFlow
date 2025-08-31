@@ -3,10 +3,14 @@ import { endpoints, publicApis, authApis } from "../../../configs/apis";
 import cookie from "react-cookies";
 
 const handleAuthError = (error) => {
-  if (error.response?.status === 401) {
-    return "Authentication failed";
+  // Nếu có response từ backend thì lấy message, nếu không thì lấy message mặc định
+  if (error?.response?.data?.message) {
+    return error.response.data.message;
   }
-  return error.response?.data?.message || error.message || "An error occurred";
+  if (error?.message) {
+    return error.message;
+  }
+  return "Có lỗi xảy ra";
 };
 
 export const loginUser = createAsyncThunk(

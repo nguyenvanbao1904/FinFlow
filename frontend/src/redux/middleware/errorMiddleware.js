@@ -10,22 +10,30 @@ let lastErrorMessage = "";
  */
 export const errorHandlingMiddleware = (api) => (next) => (action) => {
   if (isRejectedWithValue(action)) {
-    console.warn("We got a rejected action!", action);
-
     const currentTime = Date.now();
-    const errorMessage =
-      action.payload || action.error?.message || "Có lỗi xảy ra";
 
-    // Chỉ hiển thị toast nếu:
-    // 1. Lỗi khác với lỗi trước đó
-    // 2. Hoặc đã qua 5 giây kể từ toast cuối cùng
+    // Lấy thông tin lỗi từ payload (ưu tiên object có code/message)
+    let errorCode, errorMessage;
+    if (typeof action.payload === "object" && action.payload !== null) {
+      errorCode = action.payload.code;
+      errorMessage = action.payload.message || "Có lỗi xảy ra";
+    } else {
+      errorCode = null;
+      errorMessage = action.payload || action.error?.message || "Có lỗi xảy ra";
+    }
+
     const shouldShowToast =
       errorMessage !== lastErrorMessage || currentTime - lastErrorTime > 5000;
 
     if (shouldShowToast) {
-      // Xử lý lỗi xác thực (401)
-      if (action.payload === "Authentication failed") {
-        toast.error("Xác thực không thành công. Vui lòng đăng nhập lại.", {
+      if (
+        errorCode === 401 || // Unauthorized
+        errorCode === 403 || // Forbidden
+        errorMessage.toLowerCase().includes("authentication failed") ||
+        errorMessage.toLowerCase().includes("account locked") ||
+        errorMessage.toLowerCase().includes("unauthenticated")
+      ) {
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 3000,
           toastId: "auth-error",
@@ -35,7 +43,7 @@ export const errorHandlingMiddleware = (api) => (next) => (action) => {
           },
         });
       } else {
-        // Xử lý các lỗi khác
+        // Các lỗi khác chỉ hiển thị toast
         toast.error(errorMessage, {
           position: "top-right",
           autoClose: 3000,
@@ -43,7 +51,6 @@ export const errorHandlingMiddleware = (api) => (next) => (action) => {
         });
       }
 
-      // Cập nhật tracking
       lastErrorTime = currentTime;
       lastErrorMessage = errorMessage;
     }

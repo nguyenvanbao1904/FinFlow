@@ -2,14 +2,11 @@ package com.nvb.fin_flow.controller;
 
 import com.nvb.fin_flow.dto.request.CategoryCreationRequest;
 import com.nvb.fin_flow.dto.request.IconCreationRequest;
-import com.nvb.fin_flow.dto.response.CategoryResponse;
-import com.nvb.fin_flow.dto.response.IconPageableResponse;
 import com.nvb.fin_flow.dto.response.CategoryPageableResponse;
 import com.nvb.fin_flow.dto.response.IconResponse;
-import com.nvb.fin_flow.entity.Icon;
+import com.nvb.fin_flow.dto.response.UserPageableResponse;
 import com.nvb.fin_flow.enums.CategoryType;
 import com.nvb.fin_flow.mapper.CategoryMapper;
-import com.nvb.fin_flow.repository.UserRepository;
 import com.nvb.fin_flow.service.CategoryService;
 import com.nvb.fin_flow.service.IconService;
 import com.nvb.fin_flow.service.UserService;
@@ -24,16 +21,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-
 public class AdminController {
     CategoryService categoryService;
     IconService iconService;
@@ -43,18 +41,15 @@ public class AdminController {
     @GetMapping("/")
     public String dashboard(Model model, @RequestParam Map<String, String> params) {
         model.addAttribute("totalUser", userService.getTotalUser());
-        // Tính ngày cho tháng hiện tại
         LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusSeconds(1);
         long usersThisMonth = userService.getTotalUserByRegisterDateBetween(startOfMonth, endOfMonth);
         model.addAttribute("usersThisMonth", usersThisMonth);
 
-        // Tính cho 24h gần nhất
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime yesterday = now.minusHours(24);
         long usersLoggedLast24h = userService.getTotalUserByLastLoginBetween(yesterday, now);
         model.addAttribute("usersLoggedLast24h", usersLoggedLast24h);
-
 
         String year = params.getOrDefault("year", LocalDate.now().getYear() + "");
         model.addAttribute("statistics", userService.getNewUsersByMonth(Integer.parseInt(year)));
@@ -62,56 +57,76 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public String users() {
+    public String users(Model model, @RequestParam Map<String, String> params) {
+        UserPageableResponse users = userService.getUsers(params);
+        model.addAttribute("users", users.getUserResponses());
+        model.addAttribute("totalPageUser", users.getTotalPages());
+        int currentPage = Integer.parseInt(params.getOrDefault("page", "1"));
+        model.addAttribute("currentPageUser", currentPage);
         return "admin/userManagement";
+    }
+
+    @PostMapping("/users/toggleStatus")
+    public String toggleStatus(@RequestParam("userId") String userId) {
+        userService.toggleStatus(userId);
+        return "redirect:/users";
     }
 
     @GetMapping("/categories")
     public String getCategories(Model model, Authentication authentication, @RequestParam Map<String, String> params) {
         params.put("username", authentication.getName());
 
-        // Đảm bảo có page parameter cho từng loại, default là "1"
-        String expensePage = params.getOrDefault("expensePage", "1");
-        String incomePage = params.getOrDefault("incomePage", "1");
-        String savingPage = params.getOrDefault("savingPage", "1");
+        // Thiết lập giá trị mặc định để tránh lỗi Thymeleaf khi null
+        setDefaultCategoryAttributes(model);
 
-        // Lấy categories theo từng loại với pagination riêng
-        Map<String, String> expenseParams = new HashMap<>(params);
-        expenseParams.put("type", "expense");
-        expenseParams.put("page", expensePage);
-        CategoryPageableResponse expenseResponse = categoryService.getCategories(expenseParams);
-
-        Map<String, String> incomeParams = new HashMap<>(params);
-        incomeParams.put("type", "income");
-        incomeParams.put("page", incomePage);
-        CategoryPageableResponse incomeResponse = categoryService.getCategories(incomeParams);
-
-        Map<String, String> savingParams = new HashMap<>(params);
-        savingParams.put("type", "saving");
-        savingParams.put("page", savingPage);
-        CategoryPageableResponse savingResponse = categoryService.getCategories(savingParams);
-
-        model.addAttribute("categoriesExpense", expenseResponse.getCategoryResponses());
-        model.addAttribute("categoriesIncome", incomeResponse.getCategoryResponses());
-        model.addAttribute("categoriesSaving", savingResponse.getCategoryResponses());
-
-        model.addAttribute("expenseCurrentPage", Integer.parseInt(expensePage));
-        model.addAttribute("expenseTotalPages", expenseResponse.getTotalPages());
-        model.addAttribute("expenseHasNext", Integer.parseInt(expensePage) < expenseResponse.getTotalPages());
-
-        model.addAttribute("incomeCurrentPage", Integer.parseInt(incomePage));
-        model.addAttribute("incomeTotalPages", incomeResponse.getTotalPages());
-        model.addAttribute("incomeHasNext", Integer.parseInt(incomePage) < incomeResponse.getTotalPages());
-
-        model.addAttribute("savingCurrentPage", Integer.parseInt(savingPage));
-        model.addAttribute("savingTotalPages", savingResponse.getTotalPages());
-        model.addAttribute("savingHasNext", Integer.parseInt(savingPage) < savingResponse.getTotalPages());
+        if (isSingleTypeSearch(params)) {
+            handleCategory(model, params, params.get("type"), "page");
+        } else {
+            for (CategoryType categoryType : CategoryType.values()) {
+                String type = categoryType.name().toLowerCase();
+                String pageKey = type + "Page";
+                handleCategory(model, params, type, pageKey);
+            }
+        }
 
         model.addAttribute("iconCreationRequest", new IconCreationRequest());
         model.addAttribute("icons", iconService.getIconsNonPageable());
         model.addAttribute("categoryCreationRequest", new CategoryCreationRequest());
 
         return "admin/categoryManagement";
+    }
+
+    private boolean isSingleTypeSearch(Map<String, String> params) {
+        return params.containsKey("type") && !"all".equalsIgnoreCase(params.get("type"));
+    }
+
+    private void handleCategory(Model model, Map<String, String> params, String type, String pageKey) {
+        String page = params.getOrDefault(pageKey, "1");
+        Map<String, String> typeParams = new HashMap<>(params);
+        typeParams.put("type", type);
+        typeParams.put("page", page);
+
+        CategoryPageableResponse response = categoryService.getCategories(typeParams);
+
+        String capitalizedType = capitalize(type);
+        model.addAttribute("categories" + capitalizedType, response.getCategoryResponses());
+        model.addAttribute(type + "CurrentPage", Integer.parseInt(page));
+        model.addAttribute(type + "TotalPages", response.getTotalPages());
+        model.addAttribute(type + "HasNext", Integer.parseInt(page) < response.getTotalPages());
+    }
+
+    private void setDefaultCategoryAttributes(Model model) {
+        for (CategoryType categoryType : CategoryType.values()) {
+            String type = categoryType.name().toLowerCase();
+            model.addAttribute(type + "CurrentPage", 0);
+            model.addAttribute(type + "HasNext", false);
+            model.addAttribute(type + "TotalPages", 0);
+            model.addAttribute("categories" + capitalize(type), null);
+        }
+    }
+
+    private String capitalize(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
     @GetMapping("/categories/{id}")

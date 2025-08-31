@@ -29,6 +29,11 @@ public class User {
     String firstName;
     LocalDate dob;
     String lastName;
+    @Builder.Default
+    Boolean isActive = true;
+    String email;
+    @Builder.Default
+    Boolean accountVerified = false;
 
     @CreatedDate
     @Column(name = "register_date", updatable = false)

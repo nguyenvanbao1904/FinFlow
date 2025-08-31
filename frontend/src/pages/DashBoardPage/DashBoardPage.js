@@ -4,6 +4,7 @@ import StatCard from "../../components/StatCard/StatCard";
 import TransactionCard from "../../components/TransactionCard/TransactionCard";
 import style from "./dashBoardPage.module.css";
 import { useCallback, useEffect, useState } from "react";
+import { sendOtp, verifyOtp } from "../../redux/features/otp/otpThunks";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectCategoryExpenseDistribution,
@@ -24,6 +25,7 @@ import useApi from "../../hooks/useApi";
 import { endpoints } from "../../configs/apis";
 import AddTransactionModal from "../../components/Modal/AddTransactionModal";
 import CreatePasswordModal from "../../components/Modal/CreatePasswordModal";
+import VerifyAccountModal from "../../components/Modal/VerifyAccountModal";
 import { setPeriod } from "../../redux/features/transaction/transactionSlice";
 
 const DashboardPage = () => {
@@ -33,6 +35,7 @@ const DashboardPage = () => {
   const [openCreatePasswordModal, setOpenCreatePasswordModal] = useState(false);
   const [openAddTransactionModal, setOpenAddTransactionModal] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null); // State cho transaction đang edit
+  const [openVerifyAccountModal, setOpenVerifyAccountModal] = useState(false);
   const categoryExpenseDistribution = useSelector(
     selectCategoryExpenseDistribution
   );
@@ -47,8 +50,8 @@ const DashboardPage = () => {
   };
   const { callApi: callDeleteApi } = useApi();
   const { callApi: fetchTransactionApi } = useApi();
-
   const dispatch = useDispatch();
+
   const [chartData, setChartData] = useState({
     summaryTransactions: {},
     categoryExpenseDistribution: {},
@@ -239,6 +242,9 @@ const DashboardPage = () => {
   };
 
   useEffect(() => {
+    if (user && user.accountVerified === false) {
+      setOpenVerifyAccountModal(true);
+    }
     if (user.noPassword) {
       setOpenCreatePasswordModal(true);
     }
@@ -246,6 +252,24 @@ const DashboardPage = () => {
 
   const handleOpenAddTransactionModal = () => {
     setOpenAddTransactionModal(true);
+  };
+
+  const handleSendOtp = async (email) => {
+    // Gọi thunk gửi OTP
+    const resultAction = await dispatch(sendOtp(email));
+    if (sendOtp.rejected.match(resultAction)) {
+      throw new Error(resultAction.payload || "Gửi OTP thất bại!");
+    }
+    // Có thể lấy message từ resultAction.payload nếu cần
+  };
+
+  const handleVerifyOtp = async (email, otp) => {
+    // Gọi thunk xác thực OTP
+    const resultAction = await dispatch(verifyOtp({ email, otp }));
+    if (verifyOtp.rejected.match(resultAction)) {
+      throw new Error(resultAction.payload || "Xác thực OTP thất bại!");
+    }
+    // Có thể lấy message từ resultAction.payload nếu cần
   };
 
   return (
@@ -362,6 +386,13 @@ const DashboardPage = () => {
       <CreatePasswordModal
         openModal={openCreatePasswordModal}
         closeModalHandler={() => setOpenCreatePasswordModal(false)}
+      />
+
+      <VerifyAccountModal
+        openModal={openVerifyAccountModal}
+        closeModalHandler={() => setOpenVerifyAccountModal(false)}
+        onSendOtp={handleSendOtp}
+        onVerifyOtp={handleVerifyOtp}
       />
     </>
   );

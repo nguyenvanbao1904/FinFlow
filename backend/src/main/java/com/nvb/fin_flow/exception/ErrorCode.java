@@ -22,6 +22,7 @@ public enum ErrorCode {
     INVALID_DATE_FORMAT(10010, "Invalid date format", HttpStatus.BAD_REQUEST),
     DO_NOT_HAVE_PERMISSION(10011, "Do not have permission", HttpStatus.FORBIDDEN),
     PASSWORD_EXISTED(10012, "Password already existed", HttpStatus.BAD_REQUEST),
+    ACCOUNT_LOCKED(10013, "Account locked", HttpStatus.FORBIDDEN),
 
     INVALID_KEY(9999, "Invalid key", HttpStatus.BAD_REQUEST),
     ;

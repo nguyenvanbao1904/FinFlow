@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Repository
-public interface TransactionRepository extends JpaRepository<Transaction, String>, QuerydslPredicateExecutor<Transaction>, JpaSpecificationExecutor<Transaction> {
+public interface TransactionRepository extends JpaRepository<Transaction, String>, JpaSpecificationExecutor<Transaction> {
     @EntityGraph(attributePaths = {"category", "category.icon"})
     Page<Transaction> findAll(Specification<Transaction> specification, Pageable pageable);
 }

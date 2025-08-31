@@ -18,46 +18,85 @@
         <h1>Quản lý Người dùng</h1>
     </header>
 
+    <form th:action="@{/users}">
+        <div class="form-group">
+            <label>Tìm theo Username</label>
+            <input type="text" class="search-box" placeholder="Username" name="username" th:value="${param.q}">
+        </div>
+        <div class="form-group">
+            <label>Vai trò của người dùng</label>
+            <select name="role">
+                <option value="USER" th:selected="${param.type == 'USER'}">USER</option>
+                <option value="ADMIN" th:selected="${param.type == 'ADMIN'}">ADMIN</option>
+                <option value="all" th:selected="${param.type == 'all'}">Tất cả</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    </form>
+
     <div class="table-container">
         <table>
             <thead>
             <tr>
+                <th>Username</th>
                 <th>Email</th>
+                <th>Ngày sinh</th>
+                <th>Roles</th>
                 <th>Ngày đăng ký</th>
+                <th>Lần đăng nhập cuối</th>
                 <th>Trạng thái</th>
+                <th>Xác thực tài khoản</th>
                 <th>Hành động</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>user1@email.com</td>
-                <td>28-10-2024</td>
-                <td><span class="status-badge active">Hoạt động</span></td>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${#temporals.format(user.dob, 'dd/MM/yyyy')}"></td>
                 <td>
-                    <button class="action-btn-sm disable">Vô hiệu hóa</button>
-                    <button class="action-btn-sm delete">Xóa</button>
+                    <span th:each="role, iterStat : ${user.roles}">
+                        <span th:text="${role.name}"></span>
+                        <span th:if="${!iterStat.last}">, </span>
+                    </span>
                 </td>
-            </tr>
-            <tr>
-                <td>user2@email.com</td>
-                <td>25-10-2024</td>
-                <td><span class="status-badge disabled">Bị vô hiệu hóa</span></td>
+                <td th:text="${#temporals.format(user.registerDate, 'dd/MM/yyyy')}"></td>
+                <td th:text="${#temporals.format(user.lastLogin, 'dd/MM/yyyy')}"></td>
                 <td>
-                    <button class="action-btn-sm enable">Kích hoạt</button>
-                    <button class="action-btn-sm delete">Xóa</button>
+                    <span th:if="${user.isActive}" class="status-badge active">Hoạt động</span>
+                    <span th:if="${!user.isActive}" class="status-badge disabled">Bị vô hiệu hóa</span>
                 </td>
-            </tr>
-            <tr>
-                <td>user3@email.com</td>
-                <td>22-10-2024</td>
-                <td><span class="status-badge active">Hoạt động</span></td>
                 <td>
-                    <button class="action-btn-sm disable">Vô hiệu hóa</button>
-                    <button class="action-btn-sm delete">Xóa</button>
+                    <span th:if="${user.accountVerified}" class="status-badge active">Đã xác thực</span>
+                    <span th:if="${!user.accountVerified}" class="status-badge disabled">Chưa xác thực</span>
+                </td>
+                <td>
+                    <form th:action="@{/users/toggleStatus}" method="post" style="display:inline">
+                        <input type="hidden" name="userId" th:value="${user.id}">
+                        <button type="submit"
+                                th:if="${user.isActive}"
+                                class="action-btn-sm disable"
+                                th:disabled="${!user.accountVerified || #sets.contains(user.roles.![name], 'ADMIN')}"
+                                th:title="${!user.accountVerified} ? 'Cần xác thực tài khoản trước' : 'Vô hiệu hóa người dùng'">
+                            Vô hiệu hóa
+                        </button>
+                        <button type="submit"
+                                th:if="${!user.isActive}"
+                                class="action-btn-sm enable">Kích hoạt</button>
+                    </form>
                 </td>
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="pagination" th:if="${totalPageUser > 1}">
+        <span th:each="i : ${#numbers.sequence(1, totalPageUser)}">
+            <a th:href="@{/users(page=${i})}"
+               th:text="${i}"
+               class="pagination-btn"
+               th:classappend="${i == currentPageUser} ? ' active' : ''"></a>
+        </span>
     </div>
 </section>
 

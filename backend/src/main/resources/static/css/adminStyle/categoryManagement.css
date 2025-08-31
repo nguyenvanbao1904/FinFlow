@@ -248,3 +248,11 @@ input[type="color"] {
   border: 1px solid #e0e0e0;
   flex-shrink: 0;
 }
+
+.pagination-btn.active {
+  background: #3182ce;
+  color: #fff;
+  border-color: #3182ce;
+  cursor: default;
+  pointer-events: none;
+}

@@ -45,7 +45,7 @@ import java.util.*;
 public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
     UserRepository userRepository;
-    InvalidatedTokenRepository  invalidatedTokenRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
     OutboundIdentityClient outboundIdentityClient;
     OutboundUserClient outboundUserClient;
 
@@ -85,7 +85,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }catch (AppException e){
             isValid = false;
         }
-
         return IntrospectResponse.builder().valid(isValid).build();
     }
 
@@ -97,7 +96,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
-        if (!authenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!authenticated)
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        if (!user.getIsActive()) {
+            throw new AppException(ErrorCode.ACCOUNT_LOCKED);
+        }
 
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
@@ -133,12 +137,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .grantType(GRANT_TYPE)
                 .build());
 
-        log.info("TOKEN RESPONSE {}", response);
-
-        // Get user info
         var userInfo = outboundUserClient.getUserInfo("json", response.getAccessToken());
-
-        log.info("User Info {}", userInfo);
 
         Set<Role> roles = new HashSet<>();
         roles.add(Role.builder().name(PredefinedRole.USER_ROLE).build());
@@ -147,11 +146,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = userRepository.findByUsername(userInfo.getEmail()).orElseGet(
                 () -> userRepository.save(User.builder()
                         .username(userInfo.getEmail())
+                        .email(userInfo.getEmail())
+                        .accountVerified(true)
                         .firstName(userInfo.getGivenName())
                         .lastName(userInfo.getFamilyName())
                         .roles(roles)
                         .build()));
 
+        if(!user.getIsActive()){
+            throw new AppException(ErrorCode.ACCOUNT_LOCKED);
+        }
         // Generate token
         var token = generateToken(user);
 
@@ -170,7 +174,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Date expiryTime = (isRefresh)
                 ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
-                .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                        .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
@@ -182,6 +186,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return signedJWT;
     }
+
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 

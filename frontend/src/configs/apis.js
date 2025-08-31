@@ -8,6 +8,8 @@ export const endpoints = {
     logout: "/auth/logout",
     outbound: "/auth/outbound/authentication",
     introspect: "/auth/introspect",
+    sendOtp: "/auth/send-otp",
+    verifyOtp: "/auth/verify-otp",
   },
   users: {
     my_info: "/users/my-info",
