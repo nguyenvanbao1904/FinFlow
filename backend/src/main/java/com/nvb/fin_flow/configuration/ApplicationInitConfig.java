@@ -1,15 +1,10 @@
 package com.nvb.fin_flow.configuration;
 
 import com.nvb.fin_flow.constant.PredefinedRole;
-import com.nvb.fin_flow.entity.Category;
-import com.nvb.fin_flow.entity.Icon;
-import com.nvb.fin_flow.entity.Role;
-import com.nvb.fin_flow.entity.User;
+import com.nvb.fin_flow.entity.*;
 import com.nvb.fin_flow.enums.CategoryType;
-import com.nvb.fin_flow.repository.CategoryRepository;
-import com.nvb.fin_flow.repository.IconRepository;
-import com.nvb.fin_flow.repository.RoleRepository;
-import com.nvb.fin_flow.repository.UserRepository;
+import com.nvb.fin_flow.enums.SystemSettingKey;
+import com.nvb.fin_flow.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -49,7 +44,8 @@ public class ApplicationInitConfig {
             value = "datasource.driverClassName",
             havingValue = "com.mysql.cj.jdbc.Driver")
     ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository,
-                                        CategoryRepository categoryRepository, IconRepository iconRepository) {
+                                        CategoryRepository categoryRepository, IconRepository iconRepository,
+                                        SystemSettingsRepository systemSettingsRepository) {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
@@ -184,6 +180,38 @@ public class ApplicationInitConfig {
                         .build());
 
                 categoryRepository.saveAll(categories);
+            }
+
+            if(systemSettingsRepository.count() == 0){
+                systemSettingsRepository.save(SystemSetting.builder()
+                        .key(SystemSettingKey.PASSWORD_LENGTH_MIN)
+                        .description("The minimum length for a user's password.")
+                        .value("6")
+                        .build());
+
+                systemSettingsRepository.save(SystemSetting.builder()
+                        .key(SystemSettingKey.PAGE_SIZE)
+                        .description("The maximum number of records to display on a single page.")
+                        .value("5")
+                        .build());
+
+                systemSettingsRepository.save(SystemSetting.builder()
+                        .key(SystemSettingKey.OTP_EXPIRE_TIME)
+                        .description("The expiration time for an OTP, in seconds.")
+                        .value("60")
+                        .build());
+
+                systemSettingsRepository.save(SystemSetting.builder()
+                        .key(SystemSettingKey.TOKEN_EXPIRE_TIME)
+                        .description("The expiration time for an access token, in seconds.")
+                        .value("3600")
+                        .build());
+
+                systemSettingsRepository.save(SystemSetting.builder()
+                        .key(SystemSettingKey.TOKEN_REFRESHABLE_TIME)
+                        .description("The expiration time for a refresh token, in seconds.")
+                        .value("36000")
+                        .build());
             }
             log.info("Application initialization completed .....");
         };

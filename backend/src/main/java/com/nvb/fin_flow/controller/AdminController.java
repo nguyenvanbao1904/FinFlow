@@ -2,13 +2,16 @@ package com.nvb.fin_flow.controller;
 
 import com.nvb.fin_flow.dto.request.CategoryCreationRequest;
 import com.nvb.fin_flow.dto.request.IconCreationRequest;
+import com.nvb.fin_flow.dto.request.SystemSettingCreationRequest;
 import com.nvb.fin_flow.dto.response.CategoryPageableResponse;
 import com.nvb.fin_flow.dto.response.IconResponse;
 import com.nvb.fin_flow.dto.response.UserPageableResponse;
 import com.nvb.fin_flow.enums.CategoryType;
 import com.nvb.fin_flow.mapper.CategoryMapper;
+import com.nvb.fin_flow.mapper.SystemSettingMapper;
 import com.nvb.fin_flow.service.CategoryService;
 import com.nvb.fin_flow.service.IconService;
+import com.nvb.fin_flow.service.SystemSettingsService;
 import com.nvb.fin_flow.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -37,6 +40,7 @@ public class AdminController {
     IconService iconService;
     CategoryMapper categoryMapper;
     UserService userService;
+    SystemSettingsService systemSettingsService;
 
     @GetMapping("/")
     public String dashboard(Model model, @RequestParam Map<String, String> params) {
@@ -155,9 +159,18 @@ public class AdminController {
         return "redirect:/categories";
     }
 
-    @GetMapping("/notifications")
-    public String notification() {
-        return "admin/notifications";
+    @GetMapping("/system-settings")
+    public String systemSettings(Model model) {
+        model.addAttribute("settings", systemSettingsService.getSystemSettings());
+        return "admin/systemSettings";
+    }
+
+    @PostMapping("/system-settings")
+    public String updateSystemSetting(
+            @ModelAttribute("systemSettingCreationRequest") @Valid SystemSettingCreationRequest systemSettingCreationRequest) {
+        systemSettingsService.setSettingValue(systemSettingCreationRequest.getKey(),
+                systemSettingCreationRequest.getValue());
+        return "redirect:/system-settings";
     }
 
     @GetMapping("/login")

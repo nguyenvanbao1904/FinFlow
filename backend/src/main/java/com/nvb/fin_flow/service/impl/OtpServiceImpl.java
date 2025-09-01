@@ -1,6 +1,8 @@
 package com.nvb.fin_flow.service.impl;
 
+import com.nvb.fin_flow.enums.SystemSettingKey;
 import com.nvb.fin_flow.service.OtpService;
+import com.nvb.fin_flow.service.SystemSettingsService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,10 +18,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class OtpServiceImpl implements OtpService {
     StringRedisTemplate redisTemplate;
+    SystemSettingsService systemSettingsService;
 
     @Override
     public void saveOtp(String email, String otp) {
-        redisTemplate.opsForValue().set("otp:" + email, otp, 5, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set("otp:" + email, otp, Integer.parseInt(systemSettingsService.getSettingValue(SystemSettingKey.OTP_EXPIRE_TIME)), TimeUnit.SECONDS);
     }
     @Override
     public String getOtp(String email) {

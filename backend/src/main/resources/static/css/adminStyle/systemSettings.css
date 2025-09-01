@@ -1,0 +1,79 @@
+.system-settings-form-container {
+  max-width: 700px;
+  background-color: var(--bg-card);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+  margin: 2rem auto;
+}
+
+.settings-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: transparent;
+}
+
+.settings-table th,
+.settings-table td {
+  padding: 1rem 0.75rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.settings-table th {
+  background: var(--bg-main);
+  color: var(--text-dark);
+  font-weight: 700;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.settings-table td {
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.settings-table tr:last-child td {
+  border-bottom: none;
+}
+
+.settings-table input[type="text"] {
+  width: 120px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--bg-main);
+  color: var(--text-dark);
+}
+
+.btn {
+  min-width: 64px;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: #2456c5;
+}
+
+@media (max-width: 600px) {
+  .system-settings-form-container {
+    padding: 1rem;
+  }
+  .settings-table th,
+  .settings-table td {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .settings-table input[type="text"] {
+    width: 80px;
+    font-size: 0.95rem;
+  }
+}

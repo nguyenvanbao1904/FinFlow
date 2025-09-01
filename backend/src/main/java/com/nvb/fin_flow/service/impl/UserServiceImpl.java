@@ -83,7 +83,6 @@ public class UserServiceImpl implements UserService {
 
         var userResponse = userMapper.toUserResponse(user);
         userResponse.setNoPassword(!StringUtils.hasText(user.getPassword()));
-
         return userResponse;
     }
 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/mainLayout}"
+      lang="vn">
+
+<head>
+    <title layout:fragment="pageTitle">Cài đặt hệ thống</title>
+    <th:block layout:fragment="pageCss">
+        <link rel="stylesheet" th:href="@{/css/adminStyle/systemSettings.css}">
+    </th:block>
+</head>
+
+<body>
+<section id="system-settings" class="content-section active" layout:fragment="content">
+    <header class="content-header">
+        <h1>Cài đặt hệ thống</h1>
+    </header>
+
+    <div class="system-settings-form-container">
+        <form th:action="@{/system-settings}" method="post">
+            <table class="settings-table">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Mô tả</th>
+                        <th>Giá trị</th>
+                        <th>Hành động</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="setting : ${settings}">
+                        <form th:action="@{/system-settings}" method="post">
+                            <td th:text="${setting.key}"></td>
+                            <td th:text="${setting.description}"></td>
+                            <td>
+                                <input type="text" name="value" th:value="${setting.value}" />
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" type="submit">Lưu</button>
+                            </td>
+                            <td><input name="key" th:value="${setting.key}" type="hidden" /></td>
+                        </form>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</section>
+
+<th:block layout:fragment="pageJs">
+</th:block>
+</body>
+</html>

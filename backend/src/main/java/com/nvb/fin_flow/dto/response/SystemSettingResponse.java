@@ -8,8 +8,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationResponse {
-    String token;
-    boolean authenticated;
-    Boolean isPasswordChangeRequired;
+public class SystemSettingResponse {
+    String description;
+    String key;
+    String value;
+
 }

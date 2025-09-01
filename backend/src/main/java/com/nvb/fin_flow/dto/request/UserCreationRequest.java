@@ -3,6 +3,7 @@ package com.nvb.fin_flow.dto.request;
 import java.time.LocalDate;
 
 import com.nvb.fin_flow.validator.DobConstraint;
+import com.nvb.fin_flow.validator.PasswordConstraint;
 import jakarta.validation.constraints.Size;
 
 import lombok.*;
@@ -17,7 +18,7 @@ public class UserCreationRequest {
     @Size(min = 4, message = "USERNAME_INVALID")
     String username;
 
-    @Size(min = 6, message = "INVALID_PASSWORD")
+    @PasswordConstraint
     String password;
 
     String firstName;

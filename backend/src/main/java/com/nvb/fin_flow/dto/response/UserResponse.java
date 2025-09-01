@@ -28,5 +28,4 @@ public class UserResponse {
     Boolean isActive;
     String email;
     Boolean accountVerified;
-
 }

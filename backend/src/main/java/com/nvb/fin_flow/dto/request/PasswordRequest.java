@@ -1,6 +1,6 @@
 package com.nvb.fin_flow.dto.request;
 
-import jakarta.validation.constraints.Size;
+import com.nvb.fin_flow.validator.PasswordConstraint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PasswordRequest {
-    @Size(min = 6, message = "INVALID_PASSWORD")
+    @PasswordConstraint
     String password;
 }
 

@@ -1,5 +1,6 @@
 package com.nvb.fin_flow.dto.request;
 
+import com.nvb.fin_flow.validator.PasswordConstraint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,5 +11,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationRequest {
     String username;
+    @PasswordConstraint
     String password;
 }

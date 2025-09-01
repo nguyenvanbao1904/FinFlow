@@ -1,4 +1,4 @@
-package com.nvb.fin_flow.dto.response;
+package com.nvb.fin_flow.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationResponse {
-    String token;
-    boolean authenticated;
-    Boolean isPasswordChangeRequired;
+public class SystemSettingCreationRequest {
+    String key;
+    String description;
+    String value;
 }

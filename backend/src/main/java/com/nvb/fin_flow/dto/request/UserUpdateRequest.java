@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.nvb.fin_flow.validator.DobConstraint;
+import com.nvb.fin_flow.validator.PasswordConstraint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,11 +14,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
+    @PasswordConstraint
     String password;
     String firstName;
     String lastName;
 
-    @DobConstraint(min = 18, message = "INVALID_DOB")
+    @DobConstraint(min = 10, message = "INVALID_DOB")
     LocalDate dob;
 
     List<String> roles;

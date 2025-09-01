@@ -15,6 +15,7 @@ import com.nvb.fin_flow.dto.response.IntrospectResponse;
 import com.nvb.fin_flow.entity.InvalidatedToken;
 import com.nvb.fin_flow.entity.Role;
 import com.nvb.fin_flow.entity.User;
+import com.nvb.fin_flow.enums.SystemSettingKey;
 import com.nvb.fin_flow.exception.AppException;
 import com.nvb.fin_flow.exception.ErrorCode;
 import com.nvb.fin_flow.repository.InvalidatedTokenRepository;
@@ -22,6 +23,7 @@ import com.nvb.fin_flow.repository.UserRepository;
 import com.nvb.fin_flow.repository.httpclient.OutboundIdentityClient;
 import com.nvb.fin_flow.repository.httpclient.OutboundUserClient;
 import com.nvb.fin_flow.service.AuthenticationService;
+import com.nvb.fin_flow.service.SystemSettingsService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -48,18 +50,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     InvalidatedTokenRepository invalidatedTokenRepository;
     OutboundIdentityClient outboundIdentityClient;
     OutboundUserClient outboundUserClient;
+    SystemSettingsService systemSettingsService;
 
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
-
-    @NonFinal
-    @Value("${jwt.valid-duration}")
-    protected long VALID_DURATION;
-
-    @NonFinal
-    @Value("${jwt.refreshable-duration}")
-    protected long REFRESHABLE_DURATION;
 
     @NonFinal
     @Value("${outbound.identity.client-id}")
@@ -96,8 +91,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
-        if (!authenticated)
+        if (!authenticated){
             throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
 
         if (!user.getIsActive()) {
             throw new AppException(ErrorCode.ACCOUNT_LOCKED);
@@ -107,7 +103,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
         var token = generateToken(user);
 
-        return AuthenticationResponse.builder().token(token).authenticated(true).build();
+        int minLengthPassword = Integer.parseInt(systemSettingsService.getSettingValue(SystemSettingKey.PASSWORD_LENGTH_MIN));
+
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .isPasswordChangeRequired(request.getPassword().length() < minLengthPassword)
+                .build();
     }
 
     @Override
@@ -174,7 +176,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Date expiryTime = (isRefresh)
                 ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
-                        .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                        .toInstant().plus(Integer.parseInt(systemSettingsService.getSettingValue(SystemSettingKey.TOKEN_REFRESHABLE_TIME)), ChronoUnit.SECONDS).toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
@@ -195,7 +197,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .issuer("nvb.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                        Instant.now().plus(Integer.parseInt(systemSettingsService.getSettingValue(SystemSettingKey.TOKEN_EXPIRE_TIME)), ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
