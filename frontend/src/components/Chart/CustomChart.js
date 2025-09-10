@@ -1,4 +1,4 @@
-import { Line, Doughnut } from "react-chartjs-2";
+import { Line, Doughnut, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,7 +10,9 @@ import {
   Legend,
   ArcElement,
   Filler,
+  BarElement,
 } from "chart.js";
+import { createChartOptions } from "../../configs/chartConfigs";
 
 ChartJS.register(
   CategoryScale,
@@ -21,45 +23,44 @@ ChartJS.register(
   Tooltip,
   Legend,
   Filler,
-  ArcElement
+  ArcElement,
+  BarElement
 );
 
-const CustomChart = ({ data, options, type }) => {
-  if (!data || !data.labels || !data.datasets) {
-    return <div>Loading...</div>;
+const CustomChart = ({ data, type = "line" }) => {
+  if (!data || !data.labels || !data.datasets || data.datasets.length === 0) {
+    return <div>Không đủ dữ liệu để vẽ biểu đồ.</div>;
   }
-  if (!options) {
-    options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "top",
-          labels: {
-            color: "#A0AEC0",
-          },
-        },
-      },
-      elements: {
-        line: {
-          tension: 0.4, // Soften the line
-          borderWidth: 2,
-        },
-        point: {
-          radius: 5, // Larger points
-          hoverRadius: 7,
-        },
-      },
-    };
-  }
-  switch (type) {
-    case "line":
-      return <Line data={data} options={options} />;
-    case "doughnut":
-      return <Doughnut data={data} options={options} />;
-    default:
-      return <Line data={data} options={options} />;
-  }
+
+  // ✅ Auto-detect dual y-axis from yAxisID
+  const hasDualAxis =
+    type === "mixed" &&
+    data.datasets.some(
+      (ds) => ds.yAxisID === "y-left" || ds.yAxisID === "y-right"
+    );
+
+  const options = createChartOptions(hasDualAxis ? "mixed-dual" : type);
+
+  const chartData =
+    type === "mixed"
+      ? {
+          ...data,
+          datasets: data.datasets.map((ds) => ({
+            ...ds,
+            type: ds.type || "bar",
+          })),
+        }
+      : data;
+
+  const ChartComponent =
+    {
+      doughnut: Doughnut,
+      bar: Bar,
+      mixed: Bar,
+      line: Line,
+    }[type] || Line;
+
+  return <ChartComponent data={chartData} options={options} />;
 };
 
 export default CustomChart;

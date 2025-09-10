@@ -6,7 +6,7 @@ public interface CategoryWithIconAndUser {
     String getColorCode();
     String getType();
     IconInfo getIcon();
-    String getUserUsername();
+    String getUser_Username();
 
     interface IconInfo{
         String getId();

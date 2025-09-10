@@ -28,5 +28,6 @@ public class BudgetCreationRequest {
     LocalDate endDate;
     @JsonDeserialize(using = CategoryDeserializer.class)
     Category category;
-    Boolean isRecurring = false;  // Chỉ cần 1 checkbox
+    @Builder.Default
+    Boolean isRecurring = false;
 }

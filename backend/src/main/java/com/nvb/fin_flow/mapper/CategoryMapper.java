@@ -6,9 +6,11 @@ import com.nvb.fin_flow.entity.Category;
 import com.nvb.fin_flow.repository.projection.CategoryWithIcon;
 import com.nvb.fin_flow.repository.projection.CategoryWithIconAndUser;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {IconMapper.class})
 public interface CategoryMapper {
+    @Mapping(source = "user_Username", target = "createdBy")
     CategoryResponse toResponse(CategoryWithIconAndUser categoryWithIconAndCreatedBy);
     CategoryResponse toResponse(CategoryWithIcon categoryWithIcon);
     CategoryResponse toResponse(Category category);

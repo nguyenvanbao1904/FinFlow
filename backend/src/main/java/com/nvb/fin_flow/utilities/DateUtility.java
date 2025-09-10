@@ -18,4 +18,7 @@ public class DateUtility {
             throw new AppException(ErrorCode.INVALID_DATE_FORMAT);
         }
     }
+    public int getQuarter(LocalDate date) {
+        return (date.getMonthValue() - 1) / 3 + 1;
+    }
 }

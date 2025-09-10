@@ -5,7 +5,7 @@ import Button from "../Button/Button";
 import SubmitButton from "../Button/SubmitButton";
 import CustomChart from "../Chart/CustomChart";
 import { useState } from "react";
-import formatCurrency from "../../utils/formatCurrency";
+import { formatSimpleCurrency } from "../../utils/formatters";
 
 const SavingGoalCalculator = () => {
   const [moneyGoal, setMoneyGoal] = useState();
@@ -161,7 +161,7 @@ const SavingGoalCalculator = () => {
       tooltip: {
         callbacks: {
           label: function (context) {
-            return `${context.dataset.label}: ${formatCurrency(
+            return `${context.dataset.label}: ${formatSimpleCurrency(
               context.parsed.y
             )}`;
           },
@@ -173,7 +173,7 @@ const SavingGoalCalculator = () => {
         beginAtZero: true,
         ticks: {
           callback: function (value) {
-            return formatCurrency(value);
+            return formatSimpleCurrency(value);
           },
           color: "#A0AEC0",
         },
@@ -203,7 +203,9 @@ const SavingGoalCalculator = () => {
               icon="fa-solid fa-bullseye"
               type="text"
               value={
-                moneyGoal ? formatCurrency(moneyGoal).replace(/\s₫/g, "") : ""
+                moneyGoal
+                  ? formatSimpleCurrency(moneyGoal).replace(/\s₫/g, "")
+                  : ""
               }
               setValue={handleMoneyGoalChange}
             />
@@ -230,7 +232,7 @@ const SavingGoalCalculator = () => {
               type="text"
               value={
                 moneyInitial
-                  ? formatCurrency(moneyInitial).replace(/\s₫/g, "")
+                  ? formatSimpleCurrency(moneyInitial).replace(/\s₫/g, "")
                   : ""
               }
               setValue={handleMoneyInitialChange}
@@ -254,7 +256,7 @@ const SavingGoalCalculator = () => {
           <div className={style.mainResult}>
             {monthlyPayment === 0
               ? "0₫"
-              : formatCurrency(monthlyPayment.toFixed(0))}
+              : formatSimpleCurrency(monthlyPayment.toFixed(0))}
           </div>
           <p
             style={{

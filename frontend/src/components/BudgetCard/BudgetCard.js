@@ -1,5 +1,5 @@
 import style from "./budgetCard.module.css";
-import formatCurrency from "../../utils/formatCurrency";
+import { formatSimpleCurrency } from "../../utils/formatters";
 import classNames from "classnames";
 
 const BudgetCard = ({ budget, onEdit, onDelete }) => {
@@ -98,13 +98,13 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
               [style.overAmount]: isOverBudget,
             })}
           >
-            {formatCurrency(budget.amountSpent || 0)}
+            {formatSimpleCurrency(budget.amountSpent || 0)}
           </span>
         </div>
         <div className={style.amountInfo}>
           <span className={style.amountLabel}>Ngân sách</span>
           <span className={style.amountValue}>
-            {formatCurrency(budget.amountLimit)}
+            {formatSimpleCurrency(budget.amountLimit)}
           </span>
         </div>
       </div>
@@ -130,10 +130,10 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
           </span>
           <span className={style.remainingAmount}>
             {isOverBudget
-              ? `Vượt ${formatCurrency(
+              ? `Vượt ${formatSimpleCurrency(
                   budget.amountSpent - budget.amountLimit
                 )}`
-              : `Còn ${formatCurrency(
+              : `Còn ${formatSimpleCurrency(
                   budget.amountLimit - budget.amountSpent
                 )}`}
           </span>

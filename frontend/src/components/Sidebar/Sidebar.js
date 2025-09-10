@@ -69,15 +69,6 @@ const Sidebar = () => {
           <i className="fa-solid fa-calculator"></i>
           <span>Công cụ</span>
         </Link>
-        <Link
-          to="/reports"
-          className={`${Style.navItem} ${
-            isActiveLink("/reports") ? Style.active : ""
-          }`}
-        >
-          <i className="fa-solid fa-chart-pie"></i>
-          <span>Báo cáo</span>
-        </Link>
       </nav>
 
       <div className={Style.sidebarFooter}>
@@ -91,15 +82,6 @@ const Sidebar = () => {
           </div>
         </div>
         <div className={Style.sidebarActions}>
-          <Link
-            to="/settings"
-            className={`${Style.navItem} ${
-              isActiveLink("/settings") ? Style.active : ""
-            }`}
-          >
-            <i className="fa-solid fa-cog"></i>
-            <span>Cài đặt</span>
-          </Link>
           <Button
             isLarge={false}
             text="Đăng xuất"

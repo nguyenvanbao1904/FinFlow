@@ -38,6 +38,21 @@ export const endpoints = {
     create: "/budgets",
     delete: "/budgets",
   },
+  investment: {
+    company: {
+      get: "/investment/company",
+      getStockShareholder: "/investment/company/stock-share-holder",
+      getBoardMember: "/investment/company/board-member",
+    },
+    financialReport: {
+      getIndicatorValue: "/investment/financial-report/indicator-value",
+      getIncomeStatement: "/investment/financial-report/income-statement",
+      getLiabilitiesAndEquity:
+        "/investment/financial-report/liabilities-and-equity",
+      getAssetsReport: "/investment/financial-report/assets-report",
+      getDividend: "/investment/financial-report/dividend",
+    },
+  },
 };
 
 export const authApis = () => {

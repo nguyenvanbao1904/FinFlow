@@ -7,7 +7,7 @@ import FormSelect from "../Form/FormSelect";
 import { endpoints } from "../../configs/apis";
 import Spinner from "../Spinner/Spinner";
 import style from "./addTransactionModal.module.css";
-import formatCurrency from "../../utils/formatCurrency";
+import { formatSimpleCurrency } from "../../utils/formatters";
 import SubmitButton from "../Button/SubmitButton";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
@@ -204,7 +204,9 @@ const AddTransactionModal = ({
             placeholder="Nhập số tiền"
             type="text"
             key="amount"
-            value={amount ? formatCurrency(amount).replace(/\s₫/g, "") : ""}
+            value={
+              amount ? formatSimpleCurrency(amount).replace(/\s₫/g, "") : ""
+            }
             setValue={handleAmountChange}
           />
           <FormSelect

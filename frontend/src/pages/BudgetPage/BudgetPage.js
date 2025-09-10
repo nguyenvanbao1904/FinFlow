@@ -13,7 +13,7 @@ import AddBudgetModal from "../../components/Modal/AddBudgetModal";
 import { fetchBudgets } from "../../redux/features/budget/budgetThunks";
 import BudgetCard from "../../components/BudgetCard/BudgetCard";
 import StatCard from "../../components/StatCard/StatCard";
-import formatCurrency from "../../utils/formatCurrency";
+import { formatSimpleCurrency } from "../../utils/formatters";
 import useApi from "../../hooks/useApi";
 import { endpoints } from "../../configs/apis";
 import { toast } from "react-toastify";
@@ -118,6 +118,7 @@ const BudgetPage = () => {
         buttonText="Thêm ngân sách"
         buttonIcon="fa-solid fa-plus"
         onClickButton={handleAddBudget}
+        isShowInput={false}
       />
       <section className={style.overviewSection}>
         {budgets.statusLoading === "loading" ? (
@@ -132,7 +133,7 @@ const BudgetPage = () => {
                 type={config.type}
                 content={{
                   title: config.title,
-                  value: `${formatCurrency(summary[config.key] || 0)}`,
+                  value: `${formatSimpleCurrency(summary[config.key] || 0)}`,
                   period:
                     period.type === "WEEK"
                       ? "Tuần"

@@ -2,8 +2,16 @@ package com.nvb.fin_flow.configuration;
 
 import com.nvb.fin_flow.constant.PredefinedRole;
 import com.nvb.fin_flow.entity.*;
-import com.nvb.fin_flow.enums.CategoryType;
-import com.nvb.fin_flow.enums.SystemSettingKey;
+import com.nvb.fin_flow.enums.*;
+import com.nvb.fin_flow.enums.NonBankingType.NonBankingIncomeStatementsType;
+import com.nvb.fin_flow.enums.NonBankingType.NonBankingIndicatorType;
+import com.nvb.fin_flow.enums.NonBankingType.NonBankingAssetsType;
+import com.nvb.fin_flow.enums.NonBankingType.NonBankingLiabilitiesAndEquityType;
+import com.nvb.fin_flow.enums.StockExchange;
+import com.nvb.fin_flow.enums.bankingType.BankingAssetsType;
+import com.nvb.fin_flow.enums.bankingType.BankingIncomeStatementsType;
+import com.nvb.fin_flow.enums.bankingType.BankingIndicatorType;
+import com.nvb.fin_flow.enums.bankingType.BankingLiabilitiesAndEquityType;
 import com.nvb.fin_flow.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +24,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Configuration
 @RequiredArgsConstructor
@@ -45,7 +57,12 @@ public class ApplicationInitConfig {
             havingValue = "com.mysql.cj.jdbc.Driver")
     ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository,
                                         CategoryRepository categoryRepository, IconRepository iconRepository,
-                                        SystemSettingsRepository systemSettingsRepository) {
+                                        SystemSettingsRepository systemSettingsRepository,
+                                        StockExchangeRepository stockExchangeRepository,
+                                        AssetsTypeRepository assetsTypeRepository,
+                                        IndicatorTypeRepository indicatorTypeRepository,
+                                        LiabilitiesAndEquityTypeRepository liabilitiesAndEquityTypeRepository,
+                                        IncomeStatementsTypeRepository incomeStatementsTypeRepository) {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
@@ -213,6 +230,65 @@ public class ApplicationInitConfig {
                         .value("36000")
                         .build());
             }
+            if(stockExchangeRepository.count() == 0){
+                Arrays.stream(StockExchange.values()).forEach(stockExchange ->
+                    stockExchangeRepository.save(com.nvb.fin_flow.entity.StockExchange.builder()
+                            .name(stockExchange.name())
+                            .build())
+                );
+            }
+            if (assetsTypeRepository.count() == 0) {
+                List<AssetsType> assetsTypes = Stream.concat(
+                                Arrays.stream(BankingAssetsType.values()),
+                                Arrays.stream(NonBankingAssetsType.values())
+                        )
+                        .map(Enum::name)
+                        .distinct()
+                        .map(name -> AssetsType.builder().name(name).build())
+                        .collect(Collectors.toList());
+
+                assetsTypeRepository.saveAll(assetsTypes);
+            }
+
+
+            if (indicatorTypeRepository.count() == 0) {
+               List<IndicatorType> indicatorTypes = Stream.concat(
+                       Arrays.stream(BankingIndicatorType.values()),
+                       Arrays.stream(NonBankingIndicatorType.values())
+                       )
+                       .map(Enum::name)
+                       .distinct()
+                       .map(name -> IndicatorType.builder().name(name).build())
+                       .collect(Collectors.toList());
+
+               indicatorTypeRepository.saveAll(indicatorTypes);
+            }
+
+            if (liabilitiesAndEquityTypeRepository.count() == 0) {
+                List<LiabilitiesAndEquityType> liabilitiesAndEquityTypes = Stream.concat(
+                                Arrays.stream(BankingLiabilitiesAndEquityType.values()),
+                                Arrays.stream(NonBankingLiabilitiesAndEquityType.values())
+                        )
+                        .map(Enum::name)
+                        .distinct()
+                        .map(name -> LiabilitiesAndEquityType.builder().name(name).build())
+                        .collect(Collectors.toList());
+
+                liabilitiesAndEquityTypeRepository.saveAll(liabilitiesAndEquityTypes);
+            }
+
+            if(incomeStatementsTypeRepository.count() == 0){
+                List<IncomeStatementsType> incomeStatementsTypes = Stream.concat(
+                        Arrays.stream(BankingIncomeStatementsType.values()),
+                        Arrays.stream(NonBankingIncomeStatementsType.values())
+                )
+                        .map(Enum::name)
+                        .distinct()
+                        .map(name -> IncomeStatementsType.builder().name(name).build())
+                        .collect(Collectors.toList());
+                incomeStatementsTypeRepository.saveAll(incomeStatementsTypes);
+            }
+
             log.info("Application initialization completed .....");
         };
     }

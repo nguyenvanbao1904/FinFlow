@@ -1,0 +1,11 @@
+package com.nvb.fin_flow.enums.bankingType;
+
+public enum BankingAssetsType {
+    CASH_AND_CASH_EQUIVALENTS,
+    TOTAL_ASSETS,
+    BALANCES_WITH_THE_SBV,
+    INTERBANK_PLACEMENTS_AND_LOANS,
+    TRADING_SECURITIES,
+    INVESTMENT_SECURITIES,
+    LOANS_TO_CUSTOMERS
+}

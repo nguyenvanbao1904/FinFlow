@@ -16,6 +16,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BudgetPage from "./pages/BudgetPage/BudgetPage";
 import ToolsPage from "./pages/ToolsPage/ToolsPage";
+import InvestmentPage from "./pages/InvestmentPage/InvestmentPage";
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ const AppContent = () => {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/budget" element={<BudgetPage />} />
               <Route path="/tools" element={<ToolsPage />} />
+              <Route path="/investment" element={<InvestmentPage />} />
             </Route>
           </Route>
         </Routes>

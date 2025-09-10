@@ -5,7 +5,7 @@ import Button from "../Button/Button";
 import SubmitButton from "../Button/SubmitButton";
 import CustomChart from "../Chart/CustomChart";
 import { useState } from "react";
-import formatCurrency from "../../utils/formatCurrency";
+import { formatSimpleCurrency } from "../../utils/formatters";
 
 const CompoundInterestCalculator = () => {
   const [initialAmount, setInitialAmount] = useState();
@@ -157,7 +157,7 @@ const CompoundInterestCalculator = () => {
       tooltip: {
         callbacks: {
           label: function (context) {
-            return `${context.dataset.label}: ${formatCurrency(
+            return `${context.dataset.label}: ${formatSimpleCurrency(
               context.parsed.y
             )}`;
           },
@@ -169,7 +169,7 @@ const CompoundInterestCalculator = () => {
         beginAtZero: true,
         ticks: {
           callback: function (value) {
-            return formatCurrency(value);
+            return formatSimpleCurrency(value);
           },
           color: "#A0AEC0",
         },
@@ -206,7 +206,7 @@ const CompoundInterestCalculator = () => {
               type="text"
               value={
                 initialAmount
-                  ? formatCurrency(initialAmount).replace(/\s₫/g, "")
+                  ? formatSimpleCurrency(initialAmount).replace(/\s₫/g, "")
                   : ""
               }
               setValue={handleInitialAmountChange}
@@ -218,7 +218,10 @@ const CompoundInterestCalculator = () => {
               type="text"
               value={
                 monthlyContribution
-                  ? formatCurrency(monthlyContribution).replace(/\s₫/g, "")
+                  ? formatSimpleCurrency(monthlyContribution).replace(
+                      /\s₫/g,
+                      ""
+                    )
                   : ""
               }
               setValue={handleMonthlyContributionChange}
@@ -255,7 +258,9 @@ const CompoundInterestCalculator = () => {
             <i className="fa-solid fa-chart-line"></i> Tổng tài sản cuối kỳ
           </h5>
           <div className={style.mainResult}>
-            {finalAmount === 0 ? "0₫" : formatCurrency(finalAmount.toFixed(0))}
+            {finalAmount === 0
+              ? "0₫"
+              : formatSimpleCurrency(finalAmount.toFixed(0))}
           </div>
           <p
             style={{
@@ -270,12 +275,14 @@ const CompoundInterestCalculator = () => {
             <br />
             <span style={{ color: "#3b82f6" }}>
               Lãi kiếm được:{" "}
-              <strong>{formatCurrency(totalInterest.toFixed(0))}</strong>
+              <strong>{formatSimpleCurrency(totalInterest.toFixed(0))}</strong>
             </span>
             <br />
             <span style={{ color: "#10b981" }}>
               Tổng đóng góp:{" "}
-              <strong>{formatCurrency(totalContributed.toFixed(0))}</strong>
+              <strong>
+                {formatSimpleCurrency(totalContributed.toFixed(0))}
+              </strong>
             </span>
           </p>
 

@@ -5,9 +5,7 @@ import { useEffect } from "react";
 const ProtectedRoute = () => {
   const user = useSelector((state) => state.auth.user);
 
-  useEffect(() => {
-    console.log(1);
-  }, [user]);
+  useEffect(() => {}, [user]);
 
   if (!user) {
     return <Navigate to="/login" replace />;

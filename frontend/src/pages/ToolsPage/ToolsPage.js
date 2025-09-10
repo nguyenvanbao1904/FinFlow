@@ -99,6 +99,7 @@ const ToolsPage = () => {
         subTitle="Bộ công cụ tài chính thông minh để lập kế hoạch tương lai"
         isShowButton={false}
         isShowPeriod={false}
+        isShowInput={false}
       />
       <section className={style.toolsContent}>
         <h2>Chọn công cụ phù hợp</h2>

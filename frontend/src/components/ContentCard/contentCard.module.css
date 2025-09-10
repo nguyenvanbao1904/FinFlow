@@ -1,34 +1,55 @@
 .cardContainer {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
+  background-color: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .cardContainer:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .cardHeader h3 {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--text-light);
+  margin: 0;
 }
 
 .cardBody {
-  height: 300px;
-  position: relative;
-  overflow: auto;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+/* Styles cho card nhỏ (cardSize = "small") */
+.small {
+  flex: 1 1 calc(33.33% - 16px);
+  max-width: calc(33.33% - 16px);
+}
+
+/* Styles cho card vừa (cardSize = "medium") */
+.medium {
+  flex: 1 1 calc(66.66% - 16px);
+  max-width: calc(66.66% - 16px);
+}
+
+/* Styles cho card lớn (cardSize = "large") */
+.large {
+  flex: 1 1 100%;
+  max-width: 100%;
 }

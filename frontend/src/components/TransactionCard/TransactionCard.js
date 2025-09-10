@@ -1,5 +1,5 @@
 import style from "./transactionCard.module.css";
-import formatCurrency from "../../utils/formatCurrency";
+import { formatSimpleCurrency } from "../../utils/formatters";
 import Button from "../Button/Button";
 
 const TransactionCard = ({
@@ -47,8 +47,8 @@ const TransactionCard = ({
         <div className={`${style.transactionAmount} ${style[type]}`}>
           {type === "expense" ? "" : "+"}
           {type === "expense"
-            ? `-${formatCurrency(amount)}`
-            : `${formatCurrency(amount)}`}
+            ? `-${formatSimpleCurrency(amount)}`
+            : `${formatSimpleCurrency(amount)}`}
         </div>
       </div>
     </div>

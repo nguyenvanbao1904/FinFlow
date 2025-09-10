@@ -11,7 +11,7 @@ import useApi from "../../hooks/useApi";
 import { endpoints } from "../../configs/apis";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
-import formatCurrency from "../../utils/formatCurrency";
+import { formatSimpleCurrency } from "../../utils/formatters";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
@@ -300,7 +300,9 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
           type="text"
           key="amountLimit"
           value={
-            amountLimit ? formatCurrency(amountLimit).replace(/\s₫/g, "") : ""
+            amountLimit
+              ? formatSimpleCurrency(amountLimit).replace(/\s₫/g, "")
+              : ""
           }
           setValue={handleAmountChange}
         />

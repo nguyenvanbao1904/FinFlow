@@ -19,7 +19,7 @@ import {
   fetchCategoryDistribution,
 } from "../../redux/features/transaction/transactionThunks";
 import { selectUser } from "../../redux/features/auth/authSelectors";
-import formatCurrency from "../../utils/formatCurrency";
+import { formatSimpleCurrency } from "../../utils/formatters";
 import CustomChart from "../../components/Chart/CustomChart";
 import useApi from "../../hooks/useApi";
 import { endpoints } from "../../configs/apis";
@@ -34,7 +34,7 @@ const DashboardPage = () => {
   const summary = useSelector(selectSummary);
   const [openCreatePasswordModal, setOpenCreatePasswordModal] = useState(false);
   const [openAddTransactionModal, setOpenAddTransactionModal] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState(null); // State cho transaction đang edit
+  const [editingTransaction, setEditingTransaction] = useState(null);
   const [openVerifyAccountModal, setOpenVerifyAccountModal] = useState(false);
   const categoryExpenseDistribution = useSelector(
     selectCategoryExpenseDistribution
@@ -67,8 +67,6 @@ const DashboardPage = () => {
   );
 
   const refreshDashboardData = useCallback(async () => {
-    console.log(1);
-
     setTransactionPage(1);
     await Promise.all([
       dispatch(fetchSummary({ period })),
@@ -163,6 +161,7 @@ const DashboardPage = () => {
         labels: expenseData.map((item) => item.category_name),
         datasets: [
           {
+            label: "Chi tiêu", // Thêm label này
             data: expenseData.map((item) => item.amount),
             backgroundColor: [
               "#ef4444",
@@ -189,6 +188,7 @@ const DashboardPage = () => {
         labels: incomeData.map((item) => item.category_name),
         datasets: [
           {
+            label: "Thu nhập", // Thêm label này
             data: incomeData.map((item) => item.amount),
             backgroundColor: [
               "#10b981",
@@ -206,7 +206,6 @@ const DashboardPage = () => {
     }));
   }, [categoryIncomeDistribution]);
 
-  // Handler cho edit transaction
   const handleEditTransaction = async (transactionId) => {
     try {
       const response = await fetchTransactionApi(
@@ -255,21 +254,17 @@ const DashboardPage = () => {
   };
 
   const handleSendOtp = async (email) => {
-    // Gọi thunk gửi OTP
     const resultAction = await dispatch(sendOtp(email));
     if (sendOtp.rejected.match(resultAction)) {
       throw new Error(resultAction.payload || "Gửi OTP thất bại!");
     }
-    // Có thể lấy message từ resultAction.payload nếu cần
   };
 
   const handleVerifyOtp = async (email, otp) => {
-    // Gọi thunk xác thực OTP
     const resultAction = await dispatch(verifyOtp({ email, otp }));
     if (verifyOtp.rejected.match(resultAction)) {
       throw new Error(resultAction.payload || "Xác thực OTP thất bại!");
     }
-    // Có thể lấy message từ resultAction.payload nếu cần
   };
 
   return (
@@ -281,6 +276,7 @@ const DashboardPage = () => {
         buttonText="Thêm giao dịch"
         buttonIcon="fa-solid fa-plus"
         onClickButton={handleOpenAddTransactionModal}
+        isShowInput={false}
       />
       <section className={style.overviewSection}>
         {statusLoading.summary === "loading" ? (
@@ -289,7 +285,6 @@ const DashboardPage = () => {
           </div>
         ) : (
           <div className={style.overviewCards}>
-            {/* SỬA LỖI Ở ĐÂY */}
             {Object.entries(summary.totalSummary || {}).map(
               ([key, item], index) => (
                 <StatCard
@@ -303,7 +298,7 @@ const DashboardPage = () => {
                         : period.type === "MONTH"
                         ? "Tháng"
                         : "Năm",
-                    value: `${formatCurrency(item)}`,
+                    value: `${formatSimpleCurrency(item)}`,
                   }}
                 />
               )
@@ -311,9 +306,10 @@ const DashboardPage = () => {
           </div>
         )}
       </section>
-      <section className={style.chartsSection}>
-        <div className={style.chartGrid}>
-          <ContentCard title="Dòng tiền theo thời gian">
+
+      <section className={style.mainContentGrid}>
+        <div className={style.cardRow}>
+          <ContentCard title="Dòng tiền theo thời gian" cardSize="medium">
             {statusLoading.summary === "loading" ? (
               <p>Đang tải biểu đồ...</p>
             ) : (
@@ -322,7 +318,7 @@ const DashboardPage = () => {
               </div>
             )}
           </ContentCard>
-          <ContentCard title="Cơ cấu chi tiêu">
+          <ContentCard title="Cơ cấu chi tiêu" cardSize="small">
             {statusLoading.categoryExpense === "loading" ? (
               <p>Đang tải biểu đồ chi tiêu...</p>
             ) : (
@@ -335,46 +331,48 @@ const DashboardPage = () => {
             )}
           </ContentCard>
         </div>
-      </section>
-      <section className={style.contentGrid}>
-        <ContentCard
-          title="Giao dịch gần đây"
-          onScrollEnd={() => setTransactionPage((prev) => prev + 1)}
-          isLoading={statusLoading.transactions === "loading"}
-        >
-          {(transactions.transactionResponses || []).length === 0 ? (
-            <p>Không có giao dịch nào</p>
-          ) : (
-            (transactions.transactionResponses || []).map((transaction) => (
-              <TransactionCard
-                key={transaction.id}
-                transactionId={transaction.id}
-                amount={`${transaction.amount}`}
-                color={transaction.category.colorCode}
-                date={transaction.date}
-                description={transaction.description}
-                title={transaction.category.name}
-                type={transaction.category.type.toLowerCase()}
-                icon={transaction.category.icon.iconClass}
-                showActions={true}
-                onEdit={handleEditTransaction}
-                onDelete={handleDeleteTransaction}
-              />
-            ))
-          )}
-        </ContentCard>
-        <ContentCard title="Cơ cấu thu nhập">
-          {statusLoading.categoryIncome === "loading" ? (
-            <p>Đang tải biểu đồ thu nhập...</p>
-          ) : (
-            <div className={style.chartBody}>
-              <CustomChart
-                type="doughnut"
-                data={chartData.categoryIncomeDistribution}
-              />
-            </div>
-          )}
-        </ContentCard>
+
+        <div className={style.cardRow}>
+          <ContentCard
+            title="Giao dịch gần đây"
+            cardSize="medium"
+            onScrollEnd={() => setTransactionPage((prev) => prev + 1)}
+            isLoading={statusLoading.transactions === "loading"}
+          >
+            {(transactions.transactionResponses || []).length === 0 ? (
+              <p>Không có giao dịch nào</p>
+            ) : (
+              (transactions.transactionResponses || []).map((transaction) => (
+                <TransactionCard
+                  key={transaction.id}
+                  transactionId={transaction.id}
+                  amount={`${transaction.amount}`}
+                  color={transaction.category.colorCode}
+                  date={transaction.date}
+                  description={transaction.description}
+                  title={transaction.category.name}
+                  type={transaction.category.type.toLowerCase()}
+                  icon={transaction.category.icon.iconClass}
+                  showActions={true}
+                  onEdit={handleEditTransaction}
+                  onDelete={handleDeleteTransaction}
+                />
+              ))
+            )}
+          </ContentCard>
+          <ContentCard title="Cơ cấu thu nhập" cardSize="small">
+            {statusLoading.categoryIncome === "loading" ? (
+              <p>Đang tải biểu đồ thu nhập...</p>
+            ) : (
+              <div className={style.chartBody}>
+                <CustomChart
+                  type="doughnut"
+                  data={chartData.categoryIncomeDistribution}
+                />
+              </div>
+            )}
+          </ContentCard>
+        </div>
       </section>
 
       <AddTransactionModal

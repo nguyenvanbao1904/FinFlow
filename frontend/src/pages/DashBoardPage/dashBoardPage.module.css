@@ -1,6 +1,6 @@
 .overviewSection {
   margin-bottom: 2rem;
-  padding: 0;
+  padding: 0 1rem;
 }
 
 .overviewCards {
@@ -9,43 +9,18 @@
   gap: 1.5rem;
 }
 
-.chartsSection {
-  margin-bottom: 2rem;
-  padding: 0;
-}
-
-.chartGrid {
-  padding: 0;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
-}
-
-.contentGrid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
-  padding: 0;
-}
-
-.transactionsList {
+.mainContentGrid {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
+  padding: 0 1rem;
 }
 
-.quickActions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.goalsSection h4 {
-  font-size: 1rem;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-  font-weight: 600;
+.cardRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .chartBody {

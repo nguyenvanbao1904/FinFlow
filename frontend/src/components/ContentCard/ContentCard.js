@@ -9,6 +9,7 @@ const ContentCard = ({
   children,
   onScrollEnd,
   isLoading,
+  cardSize = "small", // Thêm prop cardSize với giá trị mặc định
 }) => {
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
@@ -22,8 +23,11 @@ const ContentCard = ({
       onScrollEnd();
     }
   };
+
+  const cardClasses = `${style.cardContainer} ${style[cardSize]}`;
+
   return (
-    <div className={style.cardContainer}>
+    <div className={cardClasses}>
       <div className={style.cardHeader}>
         <h3>{title}</h3>
         {titleButton && (

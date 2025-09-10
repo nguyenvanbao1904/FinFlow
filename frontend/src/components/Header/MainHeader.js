@@ -3,6 +3,8 @@ import Button from "../Button/Button";
 import style from "./mainHeader.module.css";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
+import Form from "../Form/Form";
+import FormGroup from "../Form/FormGroup";
 
 const MainHeader = ({
   title,
@@ -11,13 +13,18 @@ const MainHeader = ({
   buttonText,
   buttonIcon,
   onClickButton,
+  onSubmitInput,
+  placeholderInput,
+  iconInput,
   isShowPeriod = true,
   isShowButton = true,
+  isShowInput = true,
 }) => {
   const [typePeriod, settypePeriod] = useState("WEEK");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [currentDate, setCurrentDate] = useState(dayjs());
+  const [inputValue, setInputValue] = useState("");
 
   const handleClickPeriod = (period) => {
     settypePeriod(period);
@@ -109,6 +116,18 @@ const MainHeader = ({
                 isPrimary={true}
                 onClick={onClickButton}
               />
+            )}
+            {isShowInput && (
+              <Form onSubmit={(e) => onSubmitInput(e, inputValue)}>
+                <FormGroup
+                  icon={iconInput}
+                  placeholder={placeholderInput}
+                  type="text"
+                  key="mainHeaderInput"
+                  value={inputValue}
+                  setValue={setInputValue}
+                />
+              </Form>
             )}
           </div>
         </div>

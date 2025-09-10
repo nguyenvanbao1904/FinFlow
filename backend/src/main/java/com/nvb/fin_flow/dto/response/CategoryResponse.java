@@ -14,6 +14,6 @@ public class CategoryResponse {
     String name;
     String colorCode;
     CategoryType type;
-    String userUsername;
+    String createdBy;
     IconResponse icon;
 }
