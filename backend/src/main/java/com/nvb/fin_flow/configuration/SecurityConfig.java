@@ -28,7 +28,7 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
     String[] PUBLIC_POST_ENDPOINTS = {
             "/api/auth/token", "/api/auth/logout", "/api/auth/introspect", "/api/auth/outbound/authentication",
-            "/api/users/register"
+            "/api/users/register", "/api/auth/refresh-token"
     };
 
     CustomJwtDecoder customJwtDecoder;
