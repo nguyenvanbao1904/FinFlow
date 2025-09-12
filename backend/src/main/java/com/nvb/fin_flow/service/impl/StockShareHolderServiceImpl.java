@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
@@ -28,6 +29,7 @@ public class StockShareHolderServiceImpl implements StockShareHolderService {
     CompanyRepository companyRepository;
     StockShareHolderMapper stockShareHolderMapper;
     @Override
+    @Cacheable(value = "stockShareHolders", key = "#params['code']")
     public Set<StockShareHolderResponse> getStockShareHolders(Map<String, String> params) {
         String code = params.get("code");
         String minPercentage = params.get("minPercentage");

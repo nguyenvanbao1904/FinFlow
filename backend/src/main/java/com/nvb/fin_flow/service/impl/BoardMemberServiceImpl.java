@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
@@ -28,6 +29,7 @@ public class BoardMemberServiceImpl implements BoardMemberService {
     CompanyRepository companyRepository;
     BoardMemberMapper boardMemberMapper;
     @Override
+    @Cacheable(value = "boardMembers", key = "#params['code']")
     public Set<BoardMemberResponse> getBoardMembers(Map<String, String> params) {
         String code = params.get("code");
         if (code != null && !code.isEmpty()) {
