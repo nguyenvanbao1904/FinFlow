@@ -1,6 +1,5 @@
 package com.nvb.fin_flow.configuration;
 
-import com.nvb.fin_flow.constant.PredefinedRole;
 import com.nvb.fin_flow.entity.*;
 import com.nvb.fin_flow.enums.*;
 import com.nvb.fin_flow.enums.NonBankingType.NonBankingIncomeStatementsType;
@@ -67,12 +66,12 @@ public class ApplicationInitConfig {
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
                 Role userRole = roleRepository.save(Role.builder()
-                        .name(PredefinedRole.USER_ROLE)
+                        .name(RoleType.USER.name())
                         .description("User role")
                         .build());
 
                 Role adminRole = roleRepository.save(Role.builder()
-                        .name(PredefinedRole.ADMIN_ROLE)
+                        .name(RoleType.ADMIN.name())
                         .description("Admin role")
                         .build());
 

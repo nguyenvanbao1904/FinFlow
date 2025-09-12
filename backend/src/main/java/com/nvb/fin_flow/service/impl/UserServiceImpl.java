@@ -1,6 +1,5 @@
 package com.nvb.fin_flow.service.impl;
 
-import com.nvb.fin_flow.constant.PredefinedRole;
 import com.nvb.fin_flow.dto.request.PasswordRequest;
 import com.nvb.fin_flow.dto.request.UserCreationRequest;
 import com.nvb.fin_flow.dto.response.UserMonthlyStatResponse;
@@ -9,6 +8,7 @@ import com.nvb.fin_flow.dto.response.UserResponse;
 import com.nvb.fin_flow.entity.QUser;
 import com.nvb.fin_flow.entity.Role;
 import com.nvb.fin_flow.entity.User;
+import com.nvb.fin_flow.enums.RoleType;
 import com.nvb.fin_flow.exception.AppException;
 import com.nvb.fin_flow.exception.ErrorCode;
 import com.nvb.fin_flow.mapper.UserMapper;
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+        roleRepository.findById(RoleType.USER.name()).ifPresent(roles::add);
 
         user.setRoles(roles);
 
@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserService {
     public void toggleStatus(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.ENTITY_NOT_EXISTED));
         if (user == null || user.getRoles().stream()
-                .anyMatch(role -> role.getName().equals(PredefinedRole.ADMIN_ROLE)) || !user.getAccountVerified()) {
+                .anyMatch(role -> role.getName().equals(RoleType.ADMIN.name())) || !user.getAccountVerified()) {
             throw new AppException(ErrorCode.INVALID_KEY);
         } else {
             if(user.getIsActive()){

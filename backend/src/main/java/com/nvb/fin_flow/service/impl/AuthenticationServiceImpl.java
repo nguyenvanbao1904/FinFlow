@@ -5,7 +5,6 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.nvb.fin_flow.constant.PredefinedRole;
 import com.nvb.fin_flow.dto.request.AuthenticationRequest;
 import com.nvb.fin_flow.dto.request.ExchangeTokenRequest;
 import com.nvb.fin_flow.dto.request.IntrospectRequest;
@@ -15,6 +14,7 @@ import com.nvb.fin_flow.dto.response.IntrospectResponse;
 import com.nvb.fin_flow.entity.InvalidatedToken;
 import com.nvb.fin_flow.entity.Role;
 import com.nvb.fin_flow.entity.User;
+import com.nvb.fin_flow.enums.RoleType;
 import com.nvb.fin_flow.enums.SystemSettingKey;
 import com.nvb.fin_flow.exception.AppException;
 import com.nvb.fin_flow.exception.ErrorCode;
@@ -142,7 +142,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var userInfo = outboundUserClient.getUserInfo("json", response.getAccessToken());
 
         Set<Role> roles = new HashSet<>();
-        roles.add(Role.builder().name(PredefinedRole.USER_ROLE).build());
+        roles.add(Role.builder().name(RoleType.USER.name()).build());
 
         // Onboard user
         var user = userRepository.findByUsername(userInfo.getEmail()).orElseGet(
