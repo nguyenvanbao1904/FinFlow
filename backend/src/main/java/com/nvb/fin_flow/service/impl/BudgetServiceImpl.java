@@ -36,7 +36,7 @@ import java.util.*;
 public class BudgetServiceImpl implements BudgetService {
     BudgetMapper budgetMapper;
     UserService userService;
-    BudgetRepository  budgetRepository;
+    BudgetRepository budgetRepository;
     DateUtility dateUtility;
     JPAQueryFactory queryFactory;
     PageableUtility pageableUtility;
@@ -46,6 +46,12 @@ public class BudgetServiceImpl implements BudgetService {
         Budget newBudget = budgetMapper.toEntity(request);
         User currentUser = userService.getCurrentUser();
         newBudget.setUser(currentUser);
+
+        if (newBudget.getIsRecurring() && newBudget.getRecurringType() != null) {
+            newBudget.setNextRecurrenceDate(DateUtility.calculateNextRecurrenceDate(newBudget.getStartDate(), newBudget.getRecurringType()));
+        } else {
+            newBudget.setNextRecurrenceDate(null);
+        }
 
         Budget existingBudget = budgetRepository
                 .findByUserAndCategoryAndStartDateAndEndDate(
@@ -81,7 +87,7 @@ public class BudgetServiceImpl implements BudgetService {
         String from = params.get("from");
         String to = params.get("to");
 
-        Pageable page =  pageableUtility.getPageable(params.get("page") , null);
+        Pageable page = pageableUtility.getPageable(params.get("page"), null);
 
         if (username == null || from == null || to == null) {
             throw new AppException(ErrorCode.PARAMS_INVALID);
@@ -98,7 +104,7 @@ public class BudgetServiceImpl implements BudgetService {
                                 .and(budget.endDate.goe(startDate))
                                 .and(budget.user.username.eq(username)))
                         .fetchOne()
-                ).orElse(0L);
+        ).orElse(0L);
 
         List<BudgetResponse> content = queryFactory.select(Projections.constructor(BudgetResponse.class,
                         budget.id,
@@ -139,16 +145,16 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public void deleteBudget(String id) {
-        try{
+        try {
             Budget budget = budgetRepository.findById(id).orElse(null);
-            if(budget == null){
+            if (budget == null) {
                 throw new AppException(ErrorCode.ENTITY_NOT_EXISTED, Map.of("entity", "Budget"));
             }
-            if(!budget.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
+            if (!budget.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
                 throw new AppException(ErrorCode.DO_NOT_HAVE_PERMISSION);
             }
             budgetRepository.deleteById(id);
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.SQL_EXCEPTION, Map.of("ms", e.getCause().getMessage().split("\\[")[0].trim()));
         }
     }

@@ -71,40 +71,34 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
       icon: "fa-solid fa-calendar-alt",
       iconColor: "#f59e0b",
     },
-    {
-      value: "CUSTOM",
-      label: "Tùy chỉnh",
-      icon: "fa-solid fa-calendar-plus",
-      iconColor: "#8b5cf6",
-    },
   ];
 
   // Cập nhật ngày bắt đầu và kết thúc khi thay đổi kỳ hạn
   useEffect(() => {
-    if (selectedPeriod !== "CUSTOM" && selectedPeriod) {
-      const currentDate = dayjs();
-      let newStartDate, newEndDate;
+    const currentDate = dayjs();
+    let newStartDate, newEndDate;
 
-      switch (selectedPeriod) {
-        case "WEEK":
-          newStartDate = currentDate.startOf("week").format("YYYY-MM-DD");
-          newEndDate = currentDate.endOf("week").format("YYYY-MM-DD");
-          break;
-        case "MONTH":
-          newStartDate = currentDate.startOf("month").format("YYYY-MM-DD");
-          newEndDate = currentDate.endOf("month").format("YYYY-MM-DD");
-          break;
-        case "YEAR":
-          newStartDate = currentDate.startOf("year").format("YYYY-MM-DD");
-          newEndDate = currentDate.endOf("year").format("YYYY-MM-DD");
-          break;
-        default:
-          return;
-      }
-
-      setStartDate(newStartDate);
-      setEndDate(newEndDate);
+    switch (selectedPeriod) {
+      case "WEEK":
+        newStartDate = currentDate.startOf("week").format("YYYY-MM-DD");
+        newEndDate = currentDate.endOf("week").format("YYYY-MM-DD");
+        break;
+      case "MONTH":
+        newStartDate = currentDate.startOf("month").format("YYYY-MM-DD");
+        newEndDate = currentDate.endOf("month").format("YYYY-MM-DD");
+        break;
+      case "YEAR":
+        newStartDate = currentDate.startOf("year").format("YYYY-MM-DD");
+        newEndDate = currentDate.endOf("year").format("YYYY-MM-DD");
+        break;
+      default:
+        newStartDate = currentDate.startOf("week").format("YYYY-MM-DD");
+        newEndDate = currentDate.endOf("week").format("YYYY-MM-DD");
+        break;
     }
+
+    setStartDate(newStartDate);
+    setEndDate(newEndDate);
   }, [selectedPeriod]);
 
   const fetchCategories = useCallback(
@@ -150,64 +144,24 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
     }
   }, [openModal, pageCategory, fetchCategories, categories.totalPages]);
 
-  //function để xác định period type từ startDate và endDate
   const determinePeriodFromDates = (startDate, endDate) => {
     const start = dayjs(startDate);
     const end = dayjs(endDate);
 
-    // Kiểm tra xem có phải tuần hiện tại không
-    const currentWeekStart = dayjs().startOf("week");
-    const currentWeekEnd = dayjs().endOf("week");
-    if (
-      start.isSame(currentWeekStart, "day") &&
-      end.isSame(currentWeekEnd, "day")
-    ) {
-      return "WEEK";
-    }
-
-    // Kiểm tra xem có phải tháng hiện tại không
-    const currentMonthStart = dayjs().startOf("month");
-    const currentMonthEnd = dayjs().endOf("month");
-    if (
-      start.isSame(currentMonthStart, "day") &&
-      end.isSame(currentMonthEnd, "day")
-    ) {
-      return "MONTH";
-    }
-
-    // Kiểm tra xem có phải năm hiện tại không
-    const currentYearStart = dayjs().startOf("year");
-    const currentYearEnd = dayjs().endOf("year");
-    if (
-      start.isSame(currentYearStart, "day") &&
-      end.isSame(currentYearEnd, "day")
-    ) {
-      return "YEAR";
-    }
-
-    // Kiểm tra pattern tuần bất kỳ (7 ngày, bắt đầu từ Chủ nhật)
-    const daysDiff = end.diff(start, "days");
-    if (daysDiff === 6 && start.day() === 0) {
-      return "WEEK";
-    }
-
-    // Kiểm tra pattern tháng bất kỳ (từ ngày 1 đến cuối tháng)
-    if (start.date() === 1 && end.isSame(start.endOf("month"), "day")) {
-      return "MONTH";
-    }
-
-    // Kiểm tra pattern năm bất kỳ (từ 1/1 đến 31/12)
-    if (
+    const isWeekly = end.diff(start, "days") === 6 && start.day() === 0;
+    const isMonthly =
+      start.date() === 1 && end.isSame(start.endOf("month"), "day");
+    const isYearly =
       start.month() === 0 &&
       start.date() === 1 &&
       end.month() === 11 &&
-      end.date() === 31
-    ) {
-      return "YEAR";
-    }
+      end.date() === 31;
 
-    // Nếu không khớp pattern nào thì là CUSTOM
-    return "CUSTOM";
+    if (isWeekly) return "WEEK";
+    if (isMonthly) return "MONTH";
+    if (isYearly) return "YEAR";
+
+    return "WEEK";
   };
 
   useEffect(() => {
@@ -226,13 +180,13 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
         );
         setSelectedPeriod(detectedPeriod);
       } else {
-        setSelectedPeriod("CUSTOM");
+        setSelectedPeriod("WEEK");
       }
     } else if (!budget && openModal) {
       // Reset form khi thêm mới
       setAmountLimit("");
-      setStartDate("");
-      setEndDate("");
+      setStartDate(dayjs().startOf("week").format("YYYY-MM-DD"));
+      setEndDate(dayjs().endOf("week").format("YYYY-MM-DD"));
       setSelectedCategory("");
       setIsRecurring(false);
       setSelectedPeriod("WEEK"); // Set default cho thêm mới
@@ -242,6 +196,12 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const recurringTypeMap = {
+      WEEK: "WEEKLY",
+      MONTH: "MONTHLY",
+      YEAR: "YEARLY",
+    };
+
     const formData = {
       amountLimit: parseFloat(amountLimit),
       startDate: dayjs(startDate).format("DD/MM/YYYY"),
@@ -249,9 +209,9 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
       category: selectedCategory,
       isRecurring,
       isUpdate: isEditMode,
+      recurringType: recurringTypeMap[selectedPeriod],
     };
 
-    // Thêm id nếu đang ở chế độ edit
     if (isEditMode) {
       formData.id = budget.id;
     }
@@ -329,56 +289,32 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
           placeholder="Chọn kỳ hạn"
         />
 
-        {selectedPeriod === "CUSTOM" && (
-          <>
-            <FormGroup
-              icon="fa-solid fa-calendar-days"
-              label="Ngày bắt đầu"
-              placeholder="Chọn ngày bắt đầu"
-              type="date"
-              value={startDate}
-              setValue={setStartDate}
-            />
-
-            <FormGroup
-              icon="fa-solid fa-calendar-days"
-              label="Ngày kết thúc"
-              placeholder="Chọn ngày kết thúc"
-              type="date"
-              value={endDate}
-              setValue={setEndDate}
-            />
-          </>
-        )}
-
-        {selectedPeriod !== "CUSTOM" && selectedPeriod && (
-          <div
+        <div
+          style={{
+            padding: "1rem",
+            backgroundColor: "var(--bg-tertiary)",
+            borderRadius: "8px",
+            marginBottom: "1rem",
+          }}
+        >
+          <p
             style={{
-              padding: "1rem",
-              backgroundColor: "var(--bg-tertiary)",
-              borderRadius: "8px",
-              marginBottom: "1rem",
+              margin: 0,
+              fontSize: "0.9rem",
+              color: "var(--text-secondary)",
             }}
           >
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.9rem",
-                color: "var(--text-secondary)",
-              }}
-            >
-              <i
-                className="fa-solid fa-info-circle"
-                style={{ marginRight: "0.5rem" }}
-              ></i>
-              Kỳ hạn: {dayjs(startDate).format("DD/MM/YYYY")} -{" "}
-              {dayjs(endDate).format("DD/MM/YYYY")}
-            </p>
-          </div>
-        )}
+            <i
+              className="fa-solid fa-info-circle"
+              style={{ marginRight: "0.5rem" }}
+            ></i>
+            Kỳ hạn: {dayjs(startDate).format("DD/MM/YYYY")} -{" "}
+            {dayjs(endDate).format("DD/MM/YYYY")}
+          </p>
+        </div>
 
-        {/* Hiển thị option lặp lại cho tất cả trường hợp có startDate và endDate */}
-        {startDate && endDate && (
+        {/* Cập nhật điều kiện hiển thị */}
+        {true && (
           <FormOption
             text="Lặp lại ngân sách này"
             checked={isRecurring}

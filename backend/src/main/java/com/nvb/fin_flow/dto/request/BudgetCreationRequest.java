@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.nvb.fin_flow.deserializer.CategoryDeserializer;
 import com.nvb.fin_flow.entity.Category;
+import com.nvb.fin_flow.enums.RecurringType;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -30,5 +31,6 @@ public class BudgetCreationRequest {
     Category category;
     @Builder.Default
     Boolean isRecurring = false;
+    RecurringType recurringType;
     Boolean isUpdate;
 }

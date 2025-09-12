@@ -1,5 +1,6 @@
 package com.nvb.fin_flow.utilities;
 
+import com.nvb.fin_flow.enums.RecurringType;
 import com.nvb.fin_flow.exception.AppException;
 import com.nvb.fin_flow.exception.ErrorCode;
 import org.springframework.stereotype.Component;
@@ -20,5 +21,20 @@ public class DateUtility {
     }
     public int getQuarter(LocalDate date) {
         return (date.getMonthValue() - 1) / 3 + 1;
+    }
+    public static LocalDate calculateEndDate(LocalDate startDate, RecurringType recurringType) {
+        return switch (recurringType) {
+            case WEEKLY -> startDate.plusWeeks(1).minusDays(1);
+            case MONTHLY -> startDate.plusMonths(1).minusDays(1);
+            case YEARLY -> startDate.plusYears(1).minusDays(1);
+        };
+    }
+
+    public static LocalDate calculateNextRecurrenceDate(LocalDate startDate, RecurringType recurringType) {
+        return switch (recurringType) {
+            case WEEKLY -> startDate.plusWeeks(1);
+            case MONTHLY -> startDate.plusMonths(1);
+            case YEARLY -> startDate.plusYears(1);
+        };
     }
 }

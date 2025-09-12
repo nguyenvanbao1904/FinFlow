@@ -17,6 +17,7 @@ public class BudgetResponse {
     LocalDate startDate;
     LocalDate endDate;
     CategoryResponse category;
+    @Builder.Default
     Boolean isRecurring = false;
     BigDecimal amountSpent;
 }

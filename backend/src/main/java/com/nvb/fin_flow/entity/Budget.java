@@ -3,6 +3,7 @@ package com.nvb.fin_flow.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import com.nvb.fin_flow.enums.RecurringType;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
@@ -24,6 +25,8 @@ public class Budget extends BaseTable {
     LocalDate endDate;
     Boolean isRecurring;
     LocalDate nextRecurrenceDate;
+    @Enumerated(EnumType.STRING)
+    RecurringType recurringType;
     @Builder.Default
     Boolean isActive = true;
 
