@@ -248,6 +248,7 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
       endDate: dayjs(endDate).format("DD/MM/YYYY"),
       category: selectedCategory,
       isRecurring,
+      isUpdate: isEditMode,
     };
 
     // Thêm id nếu đang ở chế độ edit
@@ -270,11 +271,7 @@ const AddBudgetModal = ({ openModal, closeModalHandler, budget = null }) => {
         },
       });
     } catch (error) {
-      console.error("Error submitting budget:", error);
-      const errorMessage = isEditMode
-        ? "Đã có lỗi xảy ra khi cập nhật ngân sách."
-        : "Đã có lỗi xảy ra khi thêm ngân sách.";
-      toast.error(errorMessage, { autoClose: 2000 });
+      toast.error(error.message, { autoClose: 2000 });
     }
   };
 

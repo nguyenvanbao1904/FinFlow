@@ -54,7 +54,6 @@ public class ApiAuthenticationController {
     ApiResponse<AuthenticationResponse> outboundAuthenticate(
             @RequestParam("code") String code
     ){
-        log.info(code);
         var result = authenticationService.outboundAuthenticate(code);
         return ApiResponse.<AuthenticationResponse>builder().data(result).build();
     }

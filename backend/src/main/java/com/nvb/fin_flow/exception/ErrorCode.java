@@ -12,7 +12,7 @@ public enum ErrorCode {
 
     UNAUTHENTICATED(1001, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     ENTITY_NOT_EXISTED(1002, "{entity} not existed", HttpStatus.NOT_FOUND),
-    USER_EXISTED(1003, "User already existed", HttpStatus.BAD_REQUEST),
+    ENTITY_EXISTED(1003, "{entity} already existed", HttpStatus.BAD_REQUEST),
     USERNAME_INVALID(1004, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1005, "Password does not have the minimum number of characters", HttpStatus.BAD_REQUEST),
     INVALID_DOB(1006, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),

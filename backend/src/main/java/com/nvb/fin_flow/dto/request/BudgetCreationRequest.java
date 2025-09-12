@@ -30,4 +30,5 @@ public class BudgetCreationRequest {
     Category category;
     @Builder.Default
     Boolean isRecurring = false;
+    Boolean isUpdate;
 }

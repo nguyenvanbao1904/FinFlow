@@ -31,6 +31,7 @@ public class User {
     String lastName;
     @Builder.Default
     Boolean isActive = true;
+    @Column(unique = true)
     String email;
     @Builder.Default
     Boolean accountVerified = false;

@@ -42,17 +42,33 @@ public class BudgetServiceImpl implements BudgetService {
     PageableUtility pageableUtility;
 
     @Override
-    public BudgetResponse addOrUpdateBudget(BudgetCreationRequest budgetCreationRequest) {
-        Budget budget = budgetMapper.toEntity(budgetCreationRequest);
-        User user = userService.getCurrentUser();
-        budget.setUser(user);
-        try{
-            budgetRepository.save(budget);
-        }catch (DataIntegrityViolationException e){
-            throw new AppException(ErrorCode.SQL_EXCEPTION, Map.of("ms", e.getCause().getMessage().split("\\[")[0].trim()));
+    public BudgetResponse addOrUpdateBudget(BudgetCreationRequest request) {
+        Budget newBudget = budgetMapper.toEntity(request);
+        User currentUser = userService.getCurrentUser();
+        newBudget.setUser(currentUser);
+
+        Budget existingBudget = budgetRepository
+                .findByUserAndCategoryAndStartDateAndEndDate(
+                        currentUser, newBudget.getCategory(), newBudget.getStartDate(), newBudget.getEndDate()
+                )
+                .orElse(null);
+
+        if (existingBudget != null && !request.getIsUpdate()) {
+            existingBudget.setAmountLimit(existingBudget.getAmountLimit().add(newBudget.getAmountLimit()));
+            newBudget = existingBudget;
+        } else if (request.getIsUpdate()) {
+            if (existingBudget != null && !existingBudget.getId().equals(newBudget.getId())) {
+                throw new AppException(ErrorCode.ENTITY_EXISTED, Map.of("entity", "Budget"));
+            }
+        }
+        try {
+            budgetRepository.save(newBudget);
+        } catch (DataIntegrityViolationException e) {
+            String message = e.getCause().getMessage().split("\\[")[0].trim();
+            throw new AppException(ErrorCode.SQL_EXCEPTION, Map.of("ms", message));
         }
 
-        return budgetMapper.toResponse(budget);
+        return budgetMapper.toResponse(newBudget);
     }
 
     @Override

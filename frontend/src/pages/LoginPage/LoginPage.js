@@ -1,7 +1,6 @@
 import style from "./loginPage.module.css";
 import Form from "../../components/Form/Form";
 import FormGroup from "../../components/Form/FormGroup";
-import FormOption from "../../components/Form/FormOption";
 import { Link } from "react-router-dom";
 import SubmitButton from "../../components/Button/SubmitButton";
 import Button from "../../components/Button/Button";
@@ -74,11 +73,11 @@ const LoginPage = () => {
               value={password}
               setValue={setPassword}
             />
-            <FormOption text="Ghi nhớ đăng nhập">
+            <div>
               <Link to={"/"} className={style.forgotPassword}>
                 Quên mật khẩu?
               </Link>
-            </FormOption>
+            </div>
             <SubmitButton text="Đăng nhập" type="submit" />
             <div className={style.divider}>
               <span>hoặc</span>
