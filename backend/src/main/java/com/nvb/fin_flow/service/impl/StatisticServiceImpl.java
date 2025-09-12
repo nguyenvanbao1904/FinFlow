@@ -87,7 +87,7 @@ public class StatisticServiceImpl implements StatisticService {
                 .from(t)
                 .join(t.category, c)
                 .join(t.user, u)
-                .where(c.type.eq(CategoryType.EXPENSE)
+                .where(c.type.eq(categoryType)
                         .and(t.date.between(startDate, endDate))
                         .and(u.username.eq(username)))
                 .fetchOne();

@@ -162,7 +162,9 @@ const DashboardPage = () => {
         datasets: [
           {
             label: "Chi tiêu", // Thêm label này
-            data: expenseData.map((item) => item.amount),
+            data: expenseData.map(
+              (item) => (item.amount / summary.totalSummary.expense) * 100
+            ),
             backgroundColor: [
               "#ef4444",
               "#f97316",
@@ -177,7 +179,7 @@ const DashboardPage = () => {
         ],
       },
     }));
-  }, [categoryExpenseDistribution]);
+  }, [categoryExpenseDistribution, summary.totalSummary.expense]);
 
   useEffect(() => {
     const incomeData = categoryIncomeDistribution.data || [];
@@ -188,8 +190,10 @@ const DashboardPage = () => {
         labels: incomeData.map((item) => item.category_name),
         datasets: [
           {
-            label: "Thu nhập", // Thêm label này
-            data: incomeData.map((item) => item.amount),
+            label: "Thu nhập",
+            data: incomeData.map(
+              (item) => (item.amount / summary.totalSummary.income) * 100
+            ),
             backgroundColor: [
               "#10b981",
               "#4dabf7",
@@ -204,7 +208,7 @@ const DashboardPage = () => {
         ],
       },
     }));
-  }, [categoryIncomeDistribution]);
+  }, [categoryIncomeDistribution, summary.totalSummary.income]);
 
   const handleEditTransaction = async (transactionId) => {
     try {

@@ -20,6 +20,8 @@ const ContentCard = ({
       onScrollEnd &&
       !isLoading
     ) {
+      console.log(1);
+
       onScrollEnd();
     }
   };

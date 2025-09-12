@@ -32,7 +32,6 @@ const CustomChart = ({ data, type = "line" }) => {
     return <div>Không đủ dữ liệu để vẽ biểu đồ.</div>;
   }
 
-  // ✅ Auto-detect dual y-axis from yAxisID
   const hasDualAxis =
     type === "mixed" &&
     data.datasets.some(
