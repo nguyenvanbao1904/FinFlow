@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 
-// Components
 import MainHeader from "../../components/Header/MainHeader";
 import ContentCard from "../../components/ContentCard/ContentCard";
 import CustomChart from "../../components/Chart/CustomChart";
@@ -11,14 +10,11 @@ import FormGroup from "../../components/Form/FormGroup";
 import SubmitButton from "../../components/Button/SubmitButton";
 import Button from "../../components/Button/Button";
 
-// Hooks
 import { useFinancialData } from "../../hooks/useFinancialData";
 import { useChartData } from "../../hooks/useChartData";
 
-// Redux
 import { setSymbol } from "../../redux/features/investment/slice/symbolSlice";
 
-// Utils
 import { formatCurrency } from "../../utils/formatters";
 import { getLatestFinancialData } from "../../utils/dataHelpers";
 import {
@@ -27,11 +23,9 @@ import {
   getCagrOpinion,
 } from "../../utils/financialInsights";
 
-// Transformers
 import { transformValuationData } from "../../services/dataTransformers/valuationTransformer";
 import { transformMultipleIndicatorData } from "../../services/dataTransformers/multipleIndicatorTransformer";
 
-// Styles
 import style from "./investmentPage.module.css";
 
 const InvestmentPage = () => {
@@ -39,7 +33,6 @@ const InvestmentPage = () => {
   const { selectedSymbol, data, fetchData, isLoading, errors } =
     useFinancialData();
 
-  // State
   const [startDate, setStartDate] = useState(() =>
     dayjs().subtract(10, "year").format("YYYY-MM-DD")
   );
@@ -47,7 +40,6 @@ const InvestmentPage = () => {
   const [typePeriod, setTypePeriod] = useState("YEARLY");
   const [hasInitialFetch, setHasInitialFetch] = useState(false);
 
-  // Destructure data
   const {
     companyOverview,
     indicatorValue,
@@ -56,10 +48,9 @@ const InvestmentPage = () => {
     assetsReport,
     dividend,
     stockShareholder,
-    boardMember, // ✅ Board Member data
+    boardMember,
   } = data;
 
-  // Business logic
   const isBankingSector = useMemo(
     () => companyOverview.data?.industry?.name === "Ngân hàng",
     [companyOverview.data?.industry?.name]
@@ -85,7 +76,6 @@ const InvestmentPage = () => {
     [assetsReport?.data]
   );
 
-  // Key indicators
   const indicators = useMemo(
     () => ({
       roe: getLatestFinancialData(filteredIndicatorData, "ROE"),
@@ -99,7 +89,6 @@ const InvestmentPage = () => {
     [filteredIndicatorData]
   );
 
-  // ✅ Chart options for mixed chart transformer
   const chartOptions = useMemo(
     () => ({
       revenue: { indicatorName: "NET_REVENUE", typePeriod },
@@ -112,7 +101,6 @@ const InvestmentPage = () => {
     [typePeriod, incomeStatementData, isBankingSector]
   );
 
-  // ✅ Chart data using unified mixed transformer
   const revenueChartData = useChartData(
     incomeStatementData,
     "revenue",
@@ -144,13 +132,11 @@ const InvestmentPage = () => {
     chartOptions.capitalStructure
   );
 
-  // ✅ Add shareholder chart data
   const shareholderChartData = useChartData(
     stockShareholder.data || [],
     "shareholder"
   );
 
-  // ✅ Line chart data (kept separate)
   const peData = useMemo(
     () => transformValuationData(filteredIndicatorData, "PE", typePeriod),
     [filteredIndicatorData, typePeriod]
@@ -186,7 +172,6 @@ const InvestmentPage = () => {
     [filteredIndicatorData, typePeriod]
   );
 
-  // Utility functions
   const hasValidData = useCallback((chartData) => {
     return chartData && chartData.labels && chartData.labels.length > 0;
   }, []);
@@ -198,7 +183,6 @@ const InvestmentPage = () => {
     [fetchData]
   );
 
-  // Event handlers
   const handleDateRangeApply = useCallback(
     (e) => {
       e.preventDefault();
@@ -221,7 +205,6 @@ const InvestmentPage = () => {
     setTypePeriod(period);
   }, []);
 
-  // Effects
   useEffect(() => {
     if (selectedSymbol && typePeriod && !hasInitialFetch) {
       stableFetchData({ startDate, endDate, period: typePeriod });
@@ -256,7 +239,6 @@ const InvestmentPage = () => {
     stableFetchData,
   ]);
 
-  // Render helpers
   const renderLoadingState = useCallback(
     (message) => (
       <div className={style.loadingContainer}>
@@ -292,7 +274,6 @@ const InvestmentPage = () => {
     [renderLoadingState, renderNoDataState, hasValidData]
   );
 
-  // Key indicators config
   const indicatorConfig = useMemo(
     () => ({
       ROE: [indicators.roe, true],
@@ -321,7 +302,6 @@ const InvestmentPage = () => {
     );
   }, [indicatorConfig]);
 
-  // Valuation data
   const valuationData = useMemo(
     () => [
       ["Định giá P/E", peData.comparison],
@@ -387,7 +367,6 @@ const InvestmentPage = () => {
     );
   }, [boardMember.data]);
 
-  // ✅ Error content render helper
   const renderErrorContent = useCallback(() => {
     return (
       <section className={style.sectionCompanyOverview}>
@@ -423,7 +402,6 @@ const InvestmentPage = () => {
 
   return (
     <>
-      {/* ✅ Always show MainHeader so users can search */}
       <MainHeader
         title="Investment"
         subTitle="Đầu tư cho tương lai của chính bạn"
@@ -434,7 +412,6 @@ const InvestmentPage = () => {
         iconInput="fa-solid fa-magnifying-glass"
       />
 
-      {/* ✅ Show error content if there's an error, but keep header */}
       {errors.companyOverview && selectedSymbol ? (
         renderErrorContent()
       ) : (
@@ -449,7 +426,6 @@ const InvestmentPage = () => {
           </section>
 
           <section className={style.sectionCompanyOverview}>
-            {/* Company Overview */}
             <ContentCard title="Tổng quan công ty" cardSize="large">
               {isLoading.companyOverview ? (
                 renderLoadingState("Đang tải thông tin công ty...")
@@ -461,7 +437,6 @@ const InvestmentPage = () => {
               )}
             </ContentCard>
 
-            {/* Key Indicators, FinFlow View, and Shareholder */}
             <div className={style.cardRow}>
               <ContentCard title="Các chỉ số quan trọng" cardSize="small">
                 {isLoading.indicatorValue
@@ -505,7 +480,6 @@ const InvestmentPage = () => {
               </ContentCard>
             </div>
 
-            {/* Period Selection */}
             <div>
               <Button
                 text="Quý"
@@ -521,9 +495,7 @@ const InvestmentPage = () => {
               />
             </div>
 
-            {/* ✅ Charts Section - All using mixed transformer */}
             <div className={style.cardRow}>
-              {/* Assets Structure */}
               <ContentCard title="Cơ cấu tài sản" cardSize="small">
                 {renderChart(
                   assetsStructureData,
@@ -533,7 +505,6 @@ const InvestmentPage = () => {
                 )}
               </ContentCard>
 
-              {/* Capital Structure */}
               <ContentCard title="Cơ cấu nguồn vốn" cardSize="small">
                 {renderChart(
                   capitalStructureData,
@@ -543,7 +514,6 @@ const InvestmentPage = () => {
                 )}
               </ContentCard>
 
-              {/* ROE & ROA */}
               <ContentCard title="ROE & ROA" cardSize="small">
                 {renderChart(
                   roeRoaData,
@@ -553,7 +523,6 @@ const InvestmentPage = () => {
                 )}
               </ContentCard>
 
-              {/* Revenue Chart */}
               <ContentCard
                 title={`Doanh thu hàng ${periodText}: Tăng trưởng kép ${
                   hasValidData(revenueChartData) ? revenueChartData.cagr : "N/A"
@@ -578,7 +547,6 @@ const InvestmentPage = () => {
                 )}
               </ContentCard>
 
-              {/* Profit Chart */}
               <ContentCard
                 title={`Lợi nhuận hàng ${periodText}: Tăng trưởng kép ${
                   hasValidData(profitChartData) ? profitChartData.cagr : "N/A"
@@ -603,7 +571,6 @@ const InvestmentPage = () => {
                 )}
               </ContentCard>
 
-              {/* Profit Margin (Non-banking only) */}
               {!isBankingSector && (
                 <ContentCard title="Biên lợi nhuận" cardSize="small">
                   {renderChart(
@@ -615,7 +582,6 @@ const InvestmentPage = () => {
                 </ContentCard>
               )}
 
-              {/* TOI Chart (Banking only) */}
               {isBankingSector && (
                 <ContentCard
                   title={`Cơ cấu TOI: Tăng trưởng kép ${
@@ -632,7 +598,6 @@ const InvestmentPage = () => {
                 </ContentCard>
               )}
 
-              {/* Dividend Chart */}
               <ContentCard
                 title={`Cổ tức hàng năm: Tăng trưởng kép ${
                   dividendChartData.stats?.cagr || "N/A"
@@ -668,7 +633,6 @@ const InvestmentPage = () => {
                 )}
               </ContentCard>
 
-              {/* ✅ Board Members Section - Medium size with scroll */}
               <ContentCard title="Ban lãnh đạo" cardSize="medium">
                 {isLoading.boardMember ? (
                   renderLoadingState("Đang tải thông tin ban lãnh đạo...")
@@ -680,7 +644,6 @@ const InvestmentPage = () => {
               </ContentCard>
             </div>
 
-            {/* Date Range Form */}
             {selectedSymbol && (
               <Form onSubmit={handleDateRangeApply}>
                 <div className={style.dateRangeContainer}>
@@ -703,7 +666,6 @@ const InvestmentPage = () => {
               </Form>
             )}
 
-            {/* Valuation Charts */}
             {[
               { metric: "P/E", data: peData },
               { metric: "P/B", data: pbData },

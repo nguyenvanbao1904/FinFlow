@@ -23,7 +23,6 @@ log_lock = Lock()
 
 
 def log(msg, highlight=False):
-    """Prints a log message, with an option to highlight it."""
     prefix = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] "
     if highlight:
         # Sử dụng mã màu ANSI để làm nổi bật thông báo
@@ -35,10 +34,6 @@ def log(msg, highlight=False):
 
 # ----------------- Utilities -----------------
 def safe_request(func, *args, **kwargs):
-    """
-    Handles API requests with rate limiting and retries.
-    Now accepts shared variables (manager_dict and api_lock) as arguments.
-    """
     manager_dict = kwargs.pop('manager_dict')
     api_lock = kwargs.pop('api_lock')
     retries = 0
@@ -511,28 +506,25 @@ def crawl_companies_data(connection_pool, manager_dict, api_lock):
 
 
 if __name__ == "__main__":
-    # log("Chương trình chính bắt đầu.")
-    # try:
-    #     # Sử dụng Manager để quản lý biến chia sẻ
-    #     with Manager() as manager:
-    #         manager_dict = manager.dict()
-    #         manager_dict['rate_limit_wait_until'] = 0
-    #         api_lock = manager.Lock()
-    #
-    #         connection_pool = dbc.create_connection_pool(pool_size=1)
-    #         if not connection_pool:
-    #             log("Lỗi khi tạo Connection Pool. Chương trình sẽ thoát.")
-    #             sys.exit(1)
-    #
-    #         crawl_industries_data(connection_pool, manager_dict, api_lock)
-    #         crawl_companies_data(connection_pool, manager_dict, api_lock)
-    #
-    # except Exception as e:
-    #     log(f"Chương trình đã bị chấm dứt do lỗi: {e}")
-    # finally:
-    #     # Loại bỏ dòng code sleep ở đây
-    #     log("Crawl hoàn tất, chương trình sẽ kết thúc.")
-    #     pass
-    finance = Finance(symbol="HPG", source="VCI")
-    df = finance.balance_sheet(lang='vi')
-    df.to_csv("tmp.csv")
+    log("Chương trình chính bắt đầu.")
+    try:
+        # Sử dụng Manager để quản lý biến chia sẻ
+        with Manager() as manager:
+            manager_dict = manager.dict()
+            manager_dict['rate_limit_wait_until'] = 0
+            api_lock = manager.Lock()
+
+            connection_pool = dbc.create_connection_pool(pool_size=1)
+            if not connection_pool:
+                log("Lỗi khi tạo Connection Pool. Chương trình sẽ thoát.")
+                sys.exit(1)
+
+            crawl_industries_data(connection_pool, manager_dict, api_lock)
+            crawl_companies_data(connection_pool, manager_dict, api_lock)
+
+    except Exception as e:
+        log(f"Chương trình đã bị chấm dứt do lỗi: {e}")
+    finally:
+        # Loại bỏ dòng code sleep ở đây
+        log("Crawl hoàn tất, chương trình sẽ kết thúc.")
+        pass

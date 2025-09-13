@@ -21,35 +21,40 @@ public class FinancialReportServiceImpl implements FinancialReportService {
     private final FinancialReportRepository financialReportRepository;
 
     @Override
-    @Cacheable(value = "indicatorValues", key = "#params['code']")
+    @Cacheable(value = "indicatorValues",
+            key = "#params['code'] + '_' + #params['from'] + '_' + #params['to'] + '_' + #params['periodType']")
     public List<FinancialReportResponse> getIndicatorValues(Map<String, String> params) {
         validateCode(params);
         return financialReportRepository.getIndicatorValues(params);
     }
 
     @Override
-    @Cacheable(value = "incomeStatements", key = "#params['code']")
+    @Cacheable(value = "incomeStatements",
+            key = "#params['code'] + '_' + #params['from'] + '_' + #params['to'] + '_' + #params['periodType']")
     public List<FinancialReportResponse> getIncomeStatements(Map<String, String> params) {
         validateCode(params);
         return financialReportRepository.getIncomeStatements(params);
     }
 
     @Override
-    @Cacheable(value = "liabilitiesAndEquityReports", key = "#params['code']")
+    @Cacheable(value = "liabilitiesAndEquityReports",
+            key = "#params['code'] + '_' + #params['from'] + '_' + #params['to'] + '_' + #params['periodType']")
     public List<FinancialReportResponse> getLiabilitiesAndEquityReports(Map<String, String> params) {
         validateCode(params);
         return financialReportRepository.getLiabilitiesAndEquityReports(params);
     }
 
     @Override
-    @Cacheable(value = "assetsReports", key = "#params['code']")
+    @Cacheable(value = "assetsReports",
+            key = "#params['code'] + '_' + #params['from'] + '_' + #params['to'] + '_' + #params['periodType']")
     public List<FinancialReportResponse> getAssetsReports(Map<String, String> params) {
         validateCode(params);
         return financialReportRepository.getAssetsReports(params);
     }
 
     @Override
-    @Cacheable(value = "dividends", key = "#params['code']")
+    @Cacheable(value = "dividends",
+            key = "#params['code'] + '_' + #params['from'] + '_' + #params['to'] + '_' + #params['periodType']")
     public List<DividendResponse> getDividends(Map<String, String> params) {
         validateCode(params);
         return financialReportRepository.getDividends(params);
