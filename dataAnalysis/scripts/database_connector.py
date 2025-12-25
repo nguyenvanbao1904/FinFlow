@@ -16,9 +16,9 @@ def create_connection_pool(pool_name="my_pool", pool_size=10, **db_config):
         db_config = {
             'host': '127.0.0.1',
             'user': 'root',
-            'password': '12345678',
+            'password': '123456',
             'database': 'fin_flow',
-            'port': 3307
+            'port': 3306
         }
     try:
         pool = pooling.MySQLConnectionPool(
